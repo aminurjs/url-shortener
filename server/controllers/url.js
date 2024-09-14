@@ -1,5 +1,5 @@
-import { nanoid } from "nanoid";
-import URL from "../models/url";
+const URL = require("../models/url");
+const shortid = require("shortid");
 
 async function handleGenerateNewShortUrl(req, res) {
   const body = req.body;
@@ -8,13 +8,13 @@ async function handleGenerateNewShortUrl(req, res) {
       error: "url is required",
     });
 
-  const shortId = nanoid(8);
+  const id = shortid.generate();
   await URL.create({
-    shortId: shortId,
+    shortId: id,
     redirectURL: body.url,
     visitHistory: [],
   });
-  return res.json({ id: shortId });
+  return res.json({ id: id });
 }
 
-export default handleGenerateNewShortUrl;
+module.exports = { handleGenerateNewShortUrl };
