@@ -1,16 +1,17 @@
 const nanoid = require("../lib/shortId");
 const ensureHttp = require("../lib/urlChecker");
 const URL = require("../models/url");
+const QRCode = require("qrcode");
 
 async function handleGenerateNewShortUrl(req, res) {
-  const body = req.body;
+  const url = req.body.url;
 
-  if (!body.url) {
+  if (!url) {
     return res.status(400).json({
       error: "url is required",
     });
   }
-  const validUrl = ensureHttp(body.url);
+  const validUrl = ensureHttp(url);
 
   let shortId;
   let isUnique = false;
@@ -25,13 +26,22 @@ async function handleGenerateNewShortUrl(req, res) {
     }
   }
 
-  await URL.create({
+  const svg = await QRCode.toString(validUrl, { type: "svg" });
+  const base64Svg = Buffer.from(svg).toString("base64");
+
+  const result = await URL.create({
     shortId,
+    qrCode: `data:image/svg+xml;base64,${base64Svg}`,
     redirectURL: validUrl,
     visitHistory: [],
   });
-
-  return res.json({ id: shortId });
+  if (result) {
+    return res.json({ data: result });
+  } else {
+    return res.status(500).json({
+      message: "Internal server error.",
+    });
+  }
 }
 
 async function handleGetAnalytics(req, res) {
