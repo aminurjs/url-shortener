@@ -1,20 +1,46 @@
+const nanoid = require("../lib/shortId");
+const ensureHttp = require("../lib/urlChecker");
 const URL = require("../models/url");
-const shortid = require("shortid");
 
 async function handleGenerateNewShortUrl(req, res) {
   const body = req.body;
-  if (!body.url)
+
+  if (!body.url) {
     return res.status(400).json({
       error: "url is required",
     });
+  }
+  const validUrl = ensureHttp(body.url);
 
-  const id = shortid.generate();
+  let shortId;
+  let isUnique = false;
+
+  while (!isUnique) {
+    shortId = nanoid();
+
+    const exist = await URL.findOne({ shortId });
+
+    if (!exist) {
+      isUnique = true;
+    }
+  }
+
   await URL.create({
-    shortId: id,
-    redirectURL: body.url,
+    shortId,
+    redirectURL: validUrl,
     visitHistory: [],
   });
-  return res.json({ id: id });
+
+  return res.json({ id: shortId });
 }
 
-module.exports = { handleGenerateNewShortUrl };
+async function handleGetAnalytics(req, res) {
+  const shortId = req.params.shortId;
+  const result = await URL.findOne({ shortId });
+  return res.status(200).json({
+    totalClicks: result.visitHistory.length,
+    analytics: result.visitHistory,
+  });
+}
+
+module.exports = { handleGenerateNewShortUrl, handleGetAnalytics };
