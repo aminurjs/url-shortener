@@ -37,10 +37,36 @@ async function handleGenerateNewShortUrl(req, res) {
 async function handleGetAnalytics(req, res) {
   const shortId = req.params.shortId;
   const result = await URL.findOne({ shortId });
-  return res.status(200).json({
-    totalClicks: result.visitHistory.length,
-    analytics: result.visitHistory,
-  });
+
+  if (result) {
+    return res.status(200).json({
+      totalClicks: result.visitHistory.length,
+      analytics: result.visitHistory,
+    });
+  } else {
+    return res.status(404).json({
+      message: "Data not found.",
+    });
+  }
 }
 
-module.exports = { handleGenerateNewShortUrl, handleGetAnalytics };
+async function handleGetRedirect(req, res) {
+  const shortId = req.params.shortId;
+  const entry = await URL.findOneAndUpdate(
+    { shortId },
+    {
+      $push: {
+        visitHistory: { timestamp: Date.now() },
+      },
+    }
+  );
+  if (entry) {
+    return res.redirect(entry.redirectURL);
+  } else {
+    return res.status(404).json({
+      message: "Invalid url.",
+    });
+  }
+}
+
+module.exports = { handleGenerateNewShortUrl, handleGetAnalytics, handleGetRedirect };
