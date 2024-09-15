@@ -15,10 +15,21 @@ const urlSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    visitHistory: [{ timestamp: { type: Number } }],
+    visitHistory: [
+      {
+        timestamp: { type: Date },
+        ipAddress: { type: String },
+        location: {
+          city: { type: String, default: null },
+          region: { type: String, default: null },
+          country: { type: String, default: null },
+          loc: { type: String, default: null },
+        },
+      },
+    ],
   },
   { timestamps: true }
-); // Move timestamps outside the schema definition
+);
 
 const URL = mongoose.model("url", urlSchema);
 

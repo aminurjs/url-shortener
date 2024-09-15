@@ -2,6 +2,7 @@ const nanoid = require("../lib/shortId");
 const ensureHttp = require("../lib/urlChecker");
 const URL = require("../models/url");
 const QRCode = require("qrcode");
+const getLocationFromIP = require("./getAddress");
 
 async function handleGenerateNewShortUrl(req, res) {
   const url = req.body.url;
@@ -62,11 +63,20 @@ async function handleGetAnalytics(req, res) {
 
 async function handleGetRedirect(req, res) {
   const shortId = req.params.shortId;
+
+  const ipAddress =
+    req.headers["cf-connecting-ip"] ||
+    req.headers["x-real-ip"] ||
+    req.headers["x-forwarded-for"] ||
+    req.socket.remoteAddress ||
+    "";
+  const location = await getLocationFromIP(ipAddress);
+
   const entry = await URL.findOneAndUpdate(
     { shortId },
     {
       $push: {
-        visitHistory: { timestamp: Date.now() },
+        visitHistory: { timestamp: Date.now(), location, ipAddress },
       },
     }
   );
