@@ -65,6 +65,7 @@ async function handleGetRedirect(req, res) {
   const shortId = req.params.shortId;
 
   const deviceType = req.device.type;
+  const referer = req.headers.referer;
 
   const ipAddress =
     req.headers["cf-connecting-ip"] ||
@@ -78,7 +79,7 @@ async function handleGetRedirect(req, res) {
     { shortId },
     {
       $push: {
-        visitHistory: { timestamp: Date.now(), location, ipAddress, device: deviceType },
+        visitHistory: { timestamp: Date.now(), location, ipAddress, device: deviceType, referer },
       },
     }
   );

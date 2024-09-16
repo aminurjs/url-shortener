@@ -2,7 +2,6 @@ const express = require("express");
 require("dotenv").config();
 const urlRouter = require("./routes/urlRoute");
 const { connectToMongoDB } = require("./connect");
-const URL = require("./models/url");
 const { handleGetRedirect } = require("./controllers/url");
 const device = require("express-device");
 
