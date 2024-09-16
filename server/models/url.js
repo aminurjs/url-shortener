@@ -19,6 +19,7 @@ const urlSchema = new mongoose.Schema(
       {
         timestamp: { type: Date },
         ipAddress: { type: String },
+        device: { type: String },
         location: {
           city: { type: String, default: null },
           region: { type: String, default: null },

@@ -64,6 +64,8 @@ async function handleGetAnalytics(req, res) {
 async function handleGetRedirect(req, res) {
   const shortId = req.params.shortId;
 
+  const deviceType = req.device.type;
+
   const ipAddress =
     req.headers["cf-connecting-ip"] ||
     req.headers["x-real-ip"] ||
@@ -76,7 +78,7 @@ async function handleGetRedirect(req, res) {
     { shortId },
     {
       $push: {
-        visitHistory: { timestamp: Date.now(), location, ipAddress },
+        visitHistory: { timestamp: Date.now(), location, ipAddress, device: deviceType },
       },
     }
   );
