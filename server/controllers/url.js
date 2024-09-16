@@ -65,7 +65,7 @@ async function handleGetRedirect(req, res) {
   const shortId = req.params.shortId;
 
   const deviceType = req.device.type;
-  const referer = req.headers.referer;
+  const referer = req.headers.referer || "direct";
 
   const ipAddress =
     req.headers["cf-connecting-ip"] ||
