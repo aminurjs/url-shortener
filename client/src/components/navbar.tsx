@@ -5,7 +5,7 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 
 const Navbar = () => {
   return (
-    <div className="shadow-sm">
+    <div className="shadow-sm absolute top-0 w-full backdrop-blur">
       <MaxWidthWrapper>
         <nav className="w-full py-3 flex justify-between items-center">
           <Link href="/" className="font-semibold text-2xl">
