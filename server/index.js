@@ -6,11 +6,11 @@ const { handleGetRedirect } = require("./controllers/url");
 const device = require("express-device");
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 app.use(express.json());
 app.use(device.capture());
 
-connectToMongoDB("mongodb://127.0.0.1:27017/short-url").then(() => {
+connectToMongoDB(process.env.MONGODB_URI).then(() => {
   console.log("mongodb connected");
 });
 
