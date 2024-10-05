@@ -79,7 +79,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <div className="py-12 bg-slate-50">
+    <div className="py-20 bg-slate-50">
       <MaxWidthWrapper className="text-center py-5 mb-6">
         <h2 className="text-primary text-4xl font-semibold mb-5">What our customers are saying</h2>
         <Button>

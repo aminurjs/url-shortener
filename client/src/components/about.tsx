@@ -49,7 +49,7 @@ const AboutLinks = () => {
       {data.map(({ title, subtitle, description, image, details }, i) => (
         <MaxWidthWrapper
           key={title}
-          className={`flex flex-col py-16 gap-12 items-center ${
+          className={`flex flex-col py-20 gap-12 items-center ${
             i === 1 ? "md:flex-row-reverse" : "md:flex-row"
           }`}
         >
