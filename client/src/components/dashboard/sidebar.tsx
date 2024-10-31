@@ -1,4 +1,3 @@
-import React from "react";
 import { Home, LineChart, Package, Package2, Settings, ShoppingCart, Users2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
