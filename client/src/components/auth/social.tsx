@@ -7,7 +7,7 @@ import Image from "next/image";
 type Pending = {
   isPending: boolean;
 };
-type Provider = "google" | "github";
+type Provider = "google";
 
 const Social = ({ isPending }: Pending) => {
   const socialSignIn = (provider: Provider) => {

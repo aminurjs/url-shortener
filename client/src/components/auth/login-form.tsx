@@ -24,18 +24,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import Social from "./social";
 
 const LoginForm = () => {
-  const searchParams = useSearchParams();
-  const urlError =
-    searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Email is already use in different provider."
-      : "";
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isShow, setIsShow] = useState<boolean>(false);
@@ -136,7 +130,7 @@ const LoginForm = () => {
                 </Link>
               </div>
 
-              <FormError message={error || urlError} />
+              <FormError message={error} />
               <FormSuccess message={success} />
               <Button disabled={isPending} type="submit" className="w-full mt-6">
                 {!isPending ? (
