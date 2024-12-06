@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { InfiniteSlider } from "./ui/inifinite-slider";
+import { InfiniteSlider } from "../ui/inifinite-slider";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 
 const testimonials = [

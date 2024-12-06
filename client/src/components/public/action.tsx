@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { ArrowRight } from "lucide-react";
 

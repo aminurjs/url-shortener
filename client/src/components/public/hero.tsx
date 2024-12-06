@@ -2,10 +2,10 @@
 
 import React, { useEffect, useRef } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import Image from "next/image";
-import { BorderBeam } from "./ui/border-beam";
+import { BorderBeam } from "../ui/border-beam";
 import gsap from "gsap";
 
 const Hero = () => {
@@ -22,7 +22,7 @@ const Hero = () => {
     const tl = gsap.timeline({
       defaults: {
         ease: "power3.out",
-        duration: 1,
+        duration: 0.5,
       },
     });
 
@@ -84,22 +84,25 @@ const Hero = () => {
   return (
     <div className="bg-[url(/assets/hero-bg.svg)] bg-top bg-no-repeat pt-20">
       <MaxWidthWrapper className="text-center flex justify-center items-center flex-col py-16">
-        <p ref={taglineRef} className="font-medium mb-4">
+        <p ref={taglineRef} className="font-medium mb-4 opacity-0">
           SHORTEN LINKS
         </p>
-        <h1 className="text-5xl max-w-5xl mx-auto font-semibold mb-5">
-          <span ref={headingRef} className="hero-text block mb-4">
+        <h1 className="text-5xl max-w-5xl mx-auto font-bold mb-5">
+          <span ref={headingRef} className="hero-text block mb-4 opacity-0">
             Create links that perform
           </span>
-          <span ref={subHeadingRef} className="text-primary block">
+          <span ref={subHeadingRef} className="text-primary block opacity-0">
             with our powerful URL Shortener
           </span>
         </h1>
-        <p ref={descriptionRef} className="text-pretty text-lg max-w-2xl">
+        <p ref={descriptionRef} className="text-pretty text-lg max-w-2xl opacity-0">
           Spark instant connections with your audience using trimmed, trustworthy, and trackable
           links within the Bitly Connections Platform.
         </p>
-        <div ref={inputGroupRef} className="flex w-full mt-10 max-w-3xl items-center mb-5">
+        <div
+          ref={inputGroupRef}
+          className="flex w-full mt-10 max-w-3xl items-center mb-5 opacity-0"
+        >
           <Input
             type="text"
             placeholder="Paste your long url"
@@ -112,7 +115,10 @@ const Hero = () => {
       </MaxWidthWrapper>
       <div className="relative">
         <MaxWidthWrapper>
-          <div ref={imageRef} className="relative max-w-5xl max-md:px-5 rounded-lg mx-auto">
+          <div
+            ref={imageRef}
+            className="relative max-w-5xl max-md:px-5 rounded-lg mx-auto opacity-0"
+          >
             <Image src="/assets/hero-img.png" width={1200} height={1200} alt="hero img" />
             <BorderBeam />
           </div>
