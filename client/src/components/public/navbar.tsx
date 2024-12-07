@@ -12,10 +12,9 @@ const Navbar = () => {
             Shorten
           </Link>
           <div className="flex gap-5">
-            <Link href="/signin">
-              {" "}
+            <Link href="/login">
               <Button size="sm" variant="outline">
-                Sign-in
+                Login
               </Button>
             </Link>
             <Link href="/signup">
