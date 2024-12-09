@@ -18,4 +18,12 @@ app.get("/:shortId", handleGetRedirect);
 
 app.use("/url", urlRouter);
 
+app.get("/", (req, res) => {
+  res.status(200).send("Welcome to our web app!");
+});
+
+app.use((req, res) => {
+  res.status(404).send("404 Not Found.");
+});
+
 app.listen(PORT, () => console.log(`Server is running at ${PORT}`));
