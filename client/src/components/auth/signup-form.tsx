@@ -29,8 +29,15 @@ import { FormSuccess } from "@/components/auth/form-success";
 
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Social from "@/components/auth/social";
+import axiosInstance from "@/utils/axiosInstance";
+import { useToast } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
+import { setServerCookie } from "@/actions/cookies";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
+  const { toast } = useToast();
+  const router = useRouter();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isShow, setIsShow] = useState<boolean>(false);
@@ -44,12 +51,40 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof signInSchema>) => {
+  const onSubmit = async (values: z.infer<typeof signInSchema>) => {
     setError("");
     setSuccess("");
 
-    setTransition(() => {
-      console.log(values);
+    setTransition(async () => {
+      try {
+        const response = await axiosInstance.post("/auth/register", values);
+        console.log("Response:", response.data);
+        if (response.data.token) {
+          setServerCookie(response.data.token);
+          router.push("/dashboard");
+        } else {
+          toast({
+            variant: "destructive",
+            description: "An unexpected error occurred",
+          });
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.error("Error posting data:", error);
+
+          toast({
+            variant: "destructive",
+            description: error.response?.data?.message || "Something went wrong",
+          });
+        } else {
+          console.error("Unexpected error:", error);
+
+          toast({
+            variant: "destructive",
+            description: "An unexpected error occurred",
+          });
+        }
+      }
     });
   };
 

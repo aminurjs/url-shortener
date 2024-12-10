@@ -18,6 +18,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { removeServerCookie } from "@/actions/cookies";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -29,6 +31,11 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+  const logout = () => {
+    removeServerCookie();
+    router.push("/");
+  };
 
   return (
     <SidebarMenu>
@@ -91,7 +98,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex items-center gap-3">
+            <DropdownMenuItem className="flex items-center gap-3" onClick={logout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
