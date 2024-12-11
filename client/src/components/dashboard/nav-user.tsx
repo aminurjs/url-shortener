@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { removeServerCookie } from "@/actions/cookies";
+import { removeTokenCookie } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 
 export function NavUser({
@@ -33,7 +33,7 @@ export function NavUser({
   const { isMobile } = useSidebar();
   const router = useRouter();
   const logout = () => {
-    removeServerCookie();
+    removeTokenCookie();
     router.push("/");
   };
 

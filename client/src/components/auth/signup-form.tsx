@@ -32,7 +32,7 @@ import Social from "@/components/auth/social";
 import axiosInstance from "@/utils/axiosInstance";
 import { useToast } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
-import { setServerCookie } from "@/actions/cookies";
+import { setTokenCookie } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
@@ -60,7 +60,7 @@ const SignUpForm = () => {
         const response = await axiosInstance.post("/auth/register", values);
         console.log("Response:", response.data);
         if (response.data.token) {
-          setServerCookie(response.data.token);
+          setTokenCookie(response.data.token);
           router.push("/dashboard");
         } else {
           toast({

@@ -29,7 +29,7 @@ import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import Social from "./social";
 import axiosInstance from "@/utils/axiosInstance";
-import { setServerCookie } from "@/actions/cookies";
+import { setTokenCookie } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
@@ -58,7 +58,7 @@ const LoginForm = () => {
         const response = await axiosInstance.post("/auth/login", values);
         console.log("Response:", response.data);
         if (response.data.token) {
-          setServerCookie(response.data.token);
+          setTokenCookie(response.data.token);
           router.push("/dashboard");
         } else {
           toast({
