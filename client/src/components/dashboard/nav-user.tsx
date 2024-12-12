@@ -18,8 +18,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { removeTokenCookie } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 export function NavUser({
   user,
@@ -31,10 +32,30 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const { logout } = useAuth();
   const router = useRouter();
-  const logout = () => {
-    removeTokenCookie();
-    router.push("/");
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push("/login");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error during logout:", error);
+
+        toast({
+          variant: "destructive",
+          description: error.message,
+        });
+      } else {
+        console.error("Unexpected error:", error);
+        toast({
+          variant: "destructive",
+          description: "An unexpected error occurred",
+        });
+      }
+    }
   };
 
   return (
@@ -98,7 +119,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex items-center gap-3" onClick={logout}>
+            <DropdownMenuItem className="flex items-center gap-3" onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

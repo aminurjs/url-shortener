@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState } from "react";
 import * as z from "zod";
 import {
   Card,
@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { signInSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -29,21 +28,20 @@ import { FormSuccess } from "@/components/auth/form-success";
 
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Social from "@/components/auth/social";
-import axiosInstance from "@/utils/axiosInstance";
 import { useToast } from "@/hooks/use-toast";
-import { AxiosError } from "axios";
-import { setTokenCookie } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { signUpSchema } from "@/schemas";
+import { useAuth } from "@/hooks/use-auth";
 
 const SignUpForm = () => {
   const { toast } = useToast();
   const router = useRouter();
+  const { signUp, isPending } = useAuth();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isShow, setIsShow] = useState<boolean>(false);
-  const [isPending, setTransition] = useTransition();
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -51,41 +49,29 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof signInSchema>) => {
+  const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
     setError("");
     setSuccess("");
 
-    setTransition(async () => {
-      try {
-        const response = await axiosInstance.post("/auth/register", values);
-        console.log("Response:", response.data);
-        if (response.data.token) {
-          setTokenCookie(response.data.token);
-          router.push("/dashboard");
-        } else {
-          toast({
-            variant: "destructive",
-            description: "An unexpected error occurred",
-          });
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error("Error posting data:", error);
+    try {
+      await signUp(values);
+      router.push("/dashboard");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error during login:", error);
 
-          toast({
-            variant: "destructive",
-            description: error.response?.data?.message || "Something went wrong",
-          });
-        } else {
-          console.error("Unexpected error:", error);
-
-          toast({
-            variant: "destructive",
-            description: "An unexpected error occurred",
-          });
-        }
+        toast({
+          variant: "destructive",
+          description: error.message,
+        });
+      } else {
+        console.error("Unexpected error:", error);
+        toast({
+          variant: "destructive",
+          description: "An unexpected error occurred",
+        });
       }
-    });
+    }
   };
 
   return (

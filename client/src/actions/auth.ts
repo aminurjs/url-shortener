@@ -2,12 +2,7 @@
 
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-
-interface TokenPayload {
-  id: string;
-  // email: string;
-  // Add other relevant fields from your token
-}
+import { User } from "@/types";
 
 export const setTokenCookie = (token: string) => {
   cookies().set("auth-token", token);
@@ -22,22 +17,21 @@ export const getTokenFromCookie = (): string | null => {
   return cookies().get("auth-token")?.value || null;
 };
 
-export const verifyToken = (token: string): TokenPayload | null => {
+export const verifyToken = (token: string): User | null => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as User;
     return decoded;
   } catch (error) {
     return null;
   }
 };
 
-export const getActiveUser = () => {
-  const token = getTokenFromCookie();
+export const getActiveUser = async () => {
+  const token = await getTokenFromCookie();
 
   if (!token) {
     return null;
   }
-
   return verifyToken(token);
 };
 

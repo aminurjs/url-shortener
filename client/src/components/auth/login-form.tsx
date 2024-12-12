@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState } from "react";
 import * as z from "zod";
 import {
   Card,
@@ -28,19 +28,17 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import Social from "./social";
-import axiosInstance from "@/utils/axiosInstance";
-import { setTokenCookie } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { AxiosError } from "axios";
+import { useAuth } from "@/hooks/use-auth";
 
 const LoginForm = () => {
   const { toast } = useToast();
   const router = useRouter();
+  const { login, isPending } = useAuth();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isShow, setIsShow] = useState<boolean>(false);
-  const [isPending, setTransition] = useTransition();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -53,37 +51,25 @@ const LoginForm = () => {
     setError("");
     setSuccess("");
 
-    setTransition(async () => {
-      try {
-        const response = await axiosInstance.post("/auth/login", values);
-        console.log("Response:", response.data);
-        if (response.data.token) {
-          setTokenCookie(response.data.token);
-          router.push("/dashboard");
-        } else {
-          toast({
-            variant: "destructive",
-            description: "An unexpected error occurred",
-          });
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error("Error posting data:", error);
+    try {
+      await login(values);
+      router.push("/dashboard");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error during login:", error);
 
-          toast({
-            variant: "destructive",
-            description: error.response?.data?.message || "Something went wrong",
-          });
-        } else {
-          console.error("Unexpected error:", error);
-
-          toast({
-            variant: "destructive",
-            description: "An unexpected error occurred",
-          });
-        }
+        toast({
+          variant: "destructive",
+          description: error.message,
+        });
+      } else {
+        console.error("Unexpected error:", error);
+        toast({
+          variant: "destructive",
+          description: "An unexpected error occurred",
+        });
       }
-    });
+    }
   };
 
   return (
