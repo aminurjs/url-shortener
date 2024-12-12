@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import * as z from "zod";
 import {
   Card,
@@ -29,16 +29,15 @@ import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
 import Social from "./social";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 
 const LoginForm = () => {
-  const { toast } = useToast();
   const router = useRouter();
-  const { login, isPending } = useAuth();
+  const { login } = useAuth();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isShow, setIsShow] = useState<boolean>(false);
+  const [isPending, setTransition] = useTransition();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -51,25 +50,15 @@ const LoginForm = () => {
     setError("");
     setSuccess("");
 
-    try {
-      await login(values);
-      router.push("/dashboard");
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error during login:", error);
-
-        toast({
-          variant: "destructive",
-          description: error.message,
-        });
+    setTransition(async () => {
+      const data = await login(values);
+      if (data.message === "Success") {
+        setSuccess(data.message);
+        router.push("/dashboard");
       } else {
-        console.error("Unexpected error:", error);
-        toast({
-          variant: "destructive",
-          description: "An unexpected error occurred",
-        });
+        setError(data.message);
       }
-    }
+    });
   };
 
   return (

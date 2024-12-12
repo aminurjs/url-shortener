@@ -12,8 +12,8 @@ import { loginSchema, signUpSchema } from "@/schemas";
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
-  signUp: async () => {},
-  login: async () => {},
+  signUp: async () => ({ message: "" }),
+  login: async () => ({ message: "" }),
   logout: async () => {},
   isPending: false,
 });
@@ -31,8 +31,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       startTransition(async () => {
         try {
           const response = await apiInstance.get("/user/me");
-          console.log(response);
-
           if (response.status === 200) {
             setUser(response.data.user);
             setIsAuthenticated(true);
@@ -53,44 +51,42 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Sign Up method
   const signUp = async (values: z.infer<typeof signUpSchema>) => {
-    startTransition(async () => {
-      try {
-        const response = await apiInstance.post("/auth/register", values);
-        if (response?.data?.user) {
-          setUser(response?.data?.user);
-          setIsAuthenticated(true);
-        } else {
-          throw new Error("An unexpected error occurred");
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          throw new Error(error.response?.data?.message || "Something went wrong");
-        } else {
-          throw new Error("An unexpected error occurred");
-        }
+    try {
+      const response = await apiInstance.post("/auth/register", values);
+      if (response?.data?.user) {
+        setUser(response?.data?.user);
+        setIsAuthenticated(true);
+        return { message: "Success" };
+      } else {
+        return { message: "An unexpected error occurred" };
       }
-    });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return { message: error.response?.data?.message || "Something went wrong" };
+      } else {
+        return { message: "An unexpected error occurred" };
+      }
+    }
   };
 
   // Login method
   const login = async (values: z.infer<typeof loginSchema>) => {
-    startTransition(async () => {
-      try {
-        const response = await apiInstance.post("/auth/login", values);
-        if (response?.data?.user) {
-          setUser(response?.data?.user);
-          setIsAuthenticated(true);
-        } else {
-          throw new Error("An unexpected error occurred");
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          throw new Error(error.response?.data?.message || "Something went wrong");
-        } else {
-          throw new Error("An unexpected error occurred");
-        }
+    try {
+      const response = await apiInstance.post("/auth/login", values);
+      if (response?.data?.user) {
+        setUser(response?.data?.user);
+        setIsAuthenticated(true);
+        return { message: "Success" };
+      } else {
+        return { message: "An unexpected error occurred" };
       }
-    });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return { message: error.response?.data?.message || "Something went wrong" };
+      } else {
+        return { message: "An unexpected error occurred" };
+      }
+    }
   };
 
   // Logout method
@@ -98,10 +94,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     startTransition(async () => {
       try {
         const response = await apiInstance.post("/auth/logout");
-        console.log(response);
         if (response?.status === 200) {
           setUser(null);
           setIsAuthenticated(false);
+          return response?.data;
         } else {
           throw new Error("An unexpected error occurred");
         }
