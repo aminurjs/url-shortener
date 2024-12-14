@@ -134,11 +134,11 @@ const LoginForm = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex items-center justify-end">
+              {/* <div className="flex items-center justify-end">
                 <Link href="/reset" className="ml-auto inline-block text-sm underline">
                   Forgot your password?
                 </Link>
-              </div>
+              </div> */}
 
               <FormError message={error} />
               <FormSuccess message={success} />
