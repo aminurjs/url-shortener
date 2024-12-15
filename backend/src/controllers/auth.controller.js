@@ -85,8 +85,6 @@ export const googleCallback = (req, res) => {
   const token = generateToken(req.user);
   res.cookie("token", token, cookieOptions);
 
-  console.log(res.getHeaders());
-
   // Redirect to frontend
   res.redirect(`${environment.cors.origin}/dashboard`);
 };
