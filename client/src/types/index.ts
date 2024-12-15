@@ -13,6 +13,6 @@ export interface AuthContextType {
     password: string;
   }) => Promise<{ message: string }>;
   login: (credentials: { email: string; password: string }) => Promise<{ message: string }>;
-  logout: () => Promise<void>;
+  logout: () => Promise<{ message: string }>;
   isPending: boolean;
 }

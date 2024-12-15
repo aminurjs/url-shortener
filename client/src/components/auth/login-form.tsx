@@ -161,7 +161,7 @@ const LoginForm = () => {
             <span className="w-full h-px  absolute left-0 top-1/2 translate-y-1/2 bg-slate-200" />
           </div>
 
-          <Social isPending={isPending} />
+          <Social />
         </div>
       </CardContent>{" "}
       <CardFooter className="flex flex-col gap-2">
