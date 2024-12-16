@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sidebar";
 import { TeamSwitcher } from "@/components/dashboard/nav-switcher";
 import { useAuth } from "@/hooks/use-auth";
+import { UserSkeleton } from "../skeleton/user";
 
 // This is sample data.
 const data = {
@@ -168,9 +169,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
+      <SidebarFooter>{user ? <NavUser user={user} /> : <UserSkeleton />}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
