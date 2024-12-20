@@ -2,16 +2,20 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import MaxWidthWrapper from "./MaxWidthWrapper";
+import { NavigationMenuDemo } from "./navigation-menu";
 
 const Navbar = () => {
   return (
-    <div className="shadow-sm absolute top-0 w-full backdrop-blur">
+    <div className="shadow-sm absolute top-0 w-full backdrop-blur z-10">
       <MaxWidthWrapper>
-        <nav className="w-full py-5 flex justify-between items-center">
+        <div className="w-full py-5 flex items-center gap-5">
           <Link href="/" className="font-semibold text-3xl">
             Shorten
           </Link>
-          <div className="flex gap-5">
+          <div>
+            <NavigationMenuDemo />
+          </div>
+          <div className="flex gap-5 flex-1 justify-end">
             <Link href="/login">
               <Button size="sm" variant="outline">
                 Login
@@ -21,7 +25,7 @@ const Navbar = () => {
               <Button size="sm">Sign-up</Button>
             </Link>
           </div>
-        </nav>
+        </div>
       </MaxWidthWrapper>
     </div>
   );

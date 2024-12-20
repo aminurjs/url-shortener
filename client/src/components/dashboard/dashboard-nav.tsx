@@ -1,7 +1,7 @@
 import React from "react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Separator } from "../ui/separator";
-import { Rocket, Search } from "lucide-react";
+import { BadgeHelp, Rocket, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
@@ -12,7 +12,6 @@ const DashboardNav = () => {
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
         <div className="w-full flex items-center justify-end flex-1 gap-4">
-          {/* Search Bar */}
           <div className="relative">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -21,7 +20,9 @@ const DashboardNav = () => {
             <Input type="text" placeholder="Search..." className="pl-10 w-64" />
           </div>
 
-          {/* Upgrade Button */}
+          <Button variant="link" className="p-0">
+            <BadgeHelp size={35} />
+          </Button>
           <Button className="flex items-center space-x-2">
             <Rocket size={20} />
             <span>Upgrade</span>
