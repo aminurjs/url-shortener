@@ -1,5 +1,4 @@
-"use client";
-
+import { DashboardHome } from "@/components/dashboard/dashboard-home";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,12 +7,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useAuth } from "@/hooks/use-auth";
 import React from "react";
 
 const Dashboard = () => {
-  const { user } = useAuth();
-  console.log(user);
   return (
     <div>
       <Breadcrumb>
@@ -27,6 +23,9 @@ const Dashboard = () => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+      <div className="pt-5">
+        <DashboardHome />
+      </div>
     </div>
   );
 };

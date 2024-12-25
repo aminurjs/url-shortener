@@ -63,7 +63,7 @@ app.use((err, req, res, next) => {
 // Start server
 const PORT = environment.port;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 //Home page

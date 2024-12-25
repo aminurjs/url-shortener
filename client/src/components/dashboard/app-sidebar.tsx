@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   AudioWaveform,
+  ChartArea,
   Command,
   GalleryVerticalEnd,
   Home,
@@ -63,6 +64,11 @@ const data = {
       title: "QR Codes",
       url: "/qr-codes",
       icon: QrCode,
+    },
+    {
+      title: "Analytics",
+      url: "/analytics",
+      icon: ChartArea,
     },
     {
       title: "Settings",
