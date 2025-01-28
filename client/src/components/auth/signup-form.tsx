@@ -32,7 +32,7 @@ import { useRouter } from "next/navigation";
 import { signUpSchema } from "@/schemas";
 import { useAuth } from "@/hooks/use-auth";
 
-const SignUpForm = () => {
+const SignUpForm = ({ apiBaseUrl }: { apiBaseUrl: string }) => {
   const router = useRouter();
   const { signUp } = useAuth();
   const [error, setError] = useState<string | undefined>("");
@@ -89,7 +89,12 @@ const SignUpForm = () => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={isPending} type="text" placeholder="John Doe" />
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        type="text"
+                        placeholder="John Doe"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -151,7 +156,11 @@ const SignUpForm = () => {
               />
               <FormError message={error} />
               <FormSuccess message={success} />
-              <Button disabled={isPending} type="submit" className="w-full mt-4">
+              <Button
+                disabled={isPending}
+                type="submit"
+                className="w-full mt-4"
+              >
                 {!isPending ? (
                   "Create free account"
                 ) : (
@@ -170,7 +179,7 @@ const SignUpForm = () => {
             <span className="w-full h-px  absolute left-0 top-1/2 translate-y-1/2 bg-slate-200" />
           </div>
 
-          <Social />
+          <Social apiBaseUrl={apiBaseUrl} />
         </div>
       </CardContent>{" "}
       <CardFooter className="flex flex-col gap-2">

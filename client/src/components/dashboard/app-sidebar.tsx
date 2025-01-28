@@ -57,22 +57,22 @@ const data = {
     },
     {
       title: "Links",
-      url: "/link",
+      url: "/dashboard/link",
       icon: Link,
     },
     {
       title: "QR Codes",
-      url: "/qr-codes",
+      url: "/dashboard/qr-codes",
       icon: QrCode,
     },
     {
       title: "Analytics",
-      url: "/analytics",
+      url: "/dashboard/analytics",
       icon: ChartArea,
     },
     {
       title: "Settings",
-      url: "/settings",
+      url: "/dashboard/settings",
       icon: Settings2,
     },
   ],
@@ -88,7 +88,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>{user ? <NavUser user={user} /> : <UserSkeleton />}</SidebarFooter>
+      <SidebarFooter>
+        {user ? <NavUser user={user} /> : <UserSkeleton />}
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

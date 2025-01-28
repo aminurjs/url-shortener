@@ -31,7 +31,7 @@ import Social from "./social";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 
-const LoginForm = () => {
+const LoginForm = ({ apiBaseUrl }: { apiBaseUrl: string }) => {
   const router = useRouter();
   const { login } = useAuth();
   const [error, setError] = useState<string | undefined>("");
@@ -142,7 +142,11 @@ const LoginForm = () => {
 
               <FormError message={error} />
               <FormSuccess message={success} />
-              <Button disabled={isPending} type="submit" className="w-full mt-6">
+              <Button
+                disabled={isPending}
+                type="submit"
+                className="w-full mt-6"
+              >
                 {!isPending ? (
                   "Login"
                 ) : (
@@ -161,7 +165,7 @@ const LoginForm = () => {
             <span className="w-full h-px  absolute left-0 top-1/2 translate-y-1/2 bg-slate-200" />
           </div>
 
-          <Social />
+          <Social apiBaseUrl={apiBaseUrl} />
         </div>
       </CardContent>{" "}
       <CardFooter className="flex flex-col gap-2">
