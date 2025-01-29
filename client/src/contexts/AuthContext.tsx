@@ -19,7 +19,9 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 // Provider component
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -40,7 +42,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error("Authentication check failed", error);
         setUser(null);
         setIsAuthenticated(false);
       } finally {
@@ -65,7 +66,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        return { message: error.response?.data?.message || "Something went wrong" };
+        return {
+          message: error.response?.data?.message || "Something went wrong",
+        };
       } else {
         return { message: "An unexpected error occurred" };
       }
@@ -88,7 +91,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        return { message: error.response?.data?.message || "Something went wrong" };
+        return {
+          message: error.response?.data?.message || "Something went wrong",
+        };
       } else {
         return { message: "An unexpected error occurred" };
       }
@@ -111,7 +116,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        return { message: error.response?.data?.message || "Something went wrong" };
+        return {
+          message: error.response?.data?.message || "Something went wrong",
+        };
       } else {
         return { message: "An unexpected error occurred" };
       }
@@ -130,5 +137,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isPending,
   };
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 };
