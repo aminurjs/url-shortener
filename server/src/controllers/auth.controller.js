@@ -6,7 +6,7 @@ import { environment } from "../config/environment.js";
 const cookieOptions = {
   httpOnly: true,
   secure: environment.nodeEnv === "production",
-  sameSite: "strict",
+  sameSite: "none",
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 };
 
@@ -114,7 +114,9 @@ export const logout = (req, res) => {
       if (req.session) {
         req.session.destroy((err) => {
           if (err) {
-            return res.status(500).json({ message: "Error destroying session" });
+            return res
+              .status(500)
+              .json({ message: "Error destroying session" });
           }
           res.json({ message: "Logged out successfully" });
         });
