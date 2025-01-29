@@ -2,7 +2,7 @@ import Navbar from "@/components/auth/navbar";
 import SignUpForm from "@/components/auth/signup-form";
 import Image from "next/image";
 import React from "react";
-const apiBaseUrl = process.env.API_BASE_URL!;
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 const SignUp = () => {
   return (
     <div className="grid grid-cols-5 min-h-screen">
