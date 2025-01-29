@@ -32,7 +32,7 @@ export const register = async (req, res, next) => {
 
     // Generate token and set as cookie
     const token = generateToken(user);
-    res.cookie("token", token, cookieOptions);
+    res.cookie("auth-token", token, cookieOptions);
 
     res.status(201).json({
       message: "User registered successfully",
@@ -65,7 +65,7 @@ export const login = async (req, res, next) => {
 
     // Generate token and set as cookie
     const token = generateToken(user);
-    res.cookie("token", token, cookieOptions);
+    res.cookie("auth-token", token, cookieOptions);
 
     res.json({
       message: "User logged in successfully",
@@ -83,7 +83,7 @@ export const login = async (req, res, next) => {
 export const googleCallback = (req, res) => {
   // Generate token and set as cookie
   const token = generateToken(req.user);
-  res.cookie("token", token, cookieOptions);
+  res.cookie("auth-token", token, cookieOptions);
 
   // Redirect to frontend
   res.redirect(`${environment.cors.origin}/dashboard`);
@@ -97,7 +97,7 @@ export const getCurrentUser = (req, res) => {
 
 export const logout = (req, res) => {
   // Clear the token cookie
-  res.clearCookie("token", {
+  res.clearCookie("auth-token", {
     httpOnly: true,
     secure: environment.nodeEnv === "production",
     sameSite: "strict",
