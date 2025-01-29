@@ -5,10 +5,10 @@ import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser"; // Add this import
 
-import { connectDB } from "./src/config/database.js";
-import { configurePassport } from "./src/config/passport.js";
-import { environment } from "./src/config/environment.js";
-import authRoutes from "./src/routes/auth.routes.js";
+import { connectDB } from "./config/database.js";
+import { configurePassport } from "./config/passport.js";
+import { environment } from "./config/environment.js";
+import authRoutes from "./routes/auth.routes.js";
 
 // Connect to database
 connectDB();
