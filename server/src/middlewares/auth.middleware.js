@@ -8,7 +8,6 @@ export const protect = async (req, res, next) => {
 
   // If no token
   if (!token) {
-    res.clearCookie("auth-token");
     return res.status(401).json({ message: "Not authorized, no token" });
   }
 
@@ -19,14 +18,12 @@ export const protect = async (req, res, next) => {
     // Check if token is expired
     const currentTime = Math.floor(Date.now() / 1000);
     if (decoded.exp && decoded.exp < currentTime) {
-      res.clearCookie("auth-token");
       return res.status(401).json({ message: "Token expired" });
     }
 
     // Find user and attach to request
     const user = await User.findById(decoded.id).select("-password");
     if (!user) {
-      res.clearCookie("auth-token");
       return res
         .status(401)
         .json({ message: "Not authorized, user not found" });
@@ -36,7 +33,6 @@ export const protect = async (req, res, next) => {
     next();
   } catch (error) {
     console.error(error);
-    res.clearCookie("auth-token");
     res.status(401).json({ message: "Not authorized, invalid token" });
   }
 };
