@@ -6,8 +6,10 @@ import { environment } from "../config/environment.js";
 const cookieOptions = {
   httpOnly: true,
   secure: environment.nodeEnv === "production",
-  sameSite: "strict",
-  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  sameSite: "None",
+  domain: environment.cors.origin,
+  path: "/",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 export const register = async (req, res, next) => {
