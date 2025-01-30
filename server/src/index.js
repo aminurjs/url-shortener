@@ -14,8 +14,9 @@ import authRoutes from "./routes/auth.routes.js";
 connectDB();
 
 const app = express();
+app.use(express.json());
+app.use(cookieParser());
 
-// Middleware
 app.use(helmet()); // Helps secure Express apps by setting various HTTP headers
 app.use(
   cors({
@@ -23,9 +24,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); // Add cookie parser middleware
 
 // Sanitize inputs to prevent NoSQL injection
 app.use(mongoSanitize());
