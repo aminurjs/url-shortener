@@ -24,6 +24,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { UserSkeleton } from "../skeleton/user";
 import NavLogo from "./nav-logo";
+import CreateNew from "./create-new-link";
 
 // This is sample data.
 const data = {
@@ -57,7 +58,7 @@ const data = {
     },
     {
       title: "Links",
-      url: "/dashboard/link",
+      url: "/dashboard/links",
       icon: Link,
     },
     {
@@ -82,8 +83,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="border-b border-muted pb-2">
         <NavLogo />
+        <CreateNew />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

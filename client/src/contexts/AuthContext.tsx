@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, setIsPending] = useState(true);
   const router = useRouter();
 
   // Check authentication on initial load
@@ -36,7 +36,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         if (response.status === 200) {
           setUser(response.data.user);
           setIsAuthenticated(true);
-          router.push("/dashboard");
         } else {
           setUser(null);
           setIsAuthenticated(false);

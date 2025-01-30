@@ -4,7 +4,7 @@ import { GalleryVerticalEnd } from "lucide-react";
 
 const NavLogo = () => {
   return (
-    <SidebarMenu className="border-b border-muted pb-2">
+    <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
