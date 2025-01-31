@@ -29,7 +29,8 @@ const testimonials = [
     image: "https://example.com/image3.jpg",
   },
   {
-    quote: "Our brand recall skyrocketed thanks to the custom domain feature. Highly recommended!",
+    quote:
+      "Our brand recall skyrocketed thanks to the custom domain feature. Highly recommended!",
     name: "Emily Brown",
     title: "Brand Manager at Creativex",
     image: "https://example.com/image4.jpg",
@@ -49,7 +50,8 @@ const testimonials = [
     image: "https://example.com/image6.jpg",
   },
   {
-    quote: "Shortening multiple links at once saves us so much time! The platform is a must-have.",
+    quote:
+      "Shortening multiple links at once saves us so much time! The platform is a must-have.",
     name: "David Wilson",
     title: "Operations Manager at GlobalReach",
     image: "https://example.com/image7.jpg",
@@ -79,9 +81,11 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <div className="py-20 bg-slate-50">
+    <div className="py-20 bg-slate-50 overflow-hidden">
       <MaxWidthWrapper className="text-center py-5 mb-6">
-        <h2 className="text-primary text-4xl font-semibold mb-5">What our customers are saying</h2>
+        <h2 className="text-primary text-4xl font-semibold mb-5">
+          What our customers are saying
+        </h2>
         <Button>
           Get started for free <ArrowRight className="ml-2 h-4 w-4" />
         </Button>{" "}
@@ -106,7 +110,9 @@ export function Testimonials() {
                     <Image src="/assets/user.png" height={100} width={100} alt="profile" />
                   </div> */}
                   <span className="flex flex-col gap-1">
-                    <span className=" leading-[1.6] text-primary font-medium">{item.name}</span>
+                    <span className=" leading-[1.6] text-primary font-medium">
+                      {item.name}
+                    </span>
                     <span className=" text-sm leading-[1.6] text-muted-foreground font-normal">
                       {item.title}
                     </span>
@@ -135,7 +141,9 @@ export function Testimonials() {
                     <Image src="/assets/user.png" height={100} width={100} alt="profile" />
                   </div> */}
                   <span className="flex flex-col gap-1">
-                    <span className=" leading-[1.6] text-primary font-medium">{item.name}</span>
+                    <span className=" leading-[1.6] text-primary font-medium">
+                      {item.name}
+                    </span>
                     <span className=" text-sm leading-[1.6] text-muted-foreground font-normal">
                       {item.title}
                     </span>

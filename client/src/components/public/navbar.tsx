@@ -2,7 +2,7 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { NavigationMenuDemo } from "./navigation-menu";
+import { NavMenu } from "./navigation-menu";
 
 const Navbar = () => {
   return (
@@ -12,8 +12,8 @@ const Navbar = () => {
           <Link href="/" className="font-semibold text-3xl">
             Shorten
           </Link>
-          <div>
-            <NavigationMenuDemo />
+          <div className="hidden md:flex">
+            <NavMenu />
           </div>
           <div className="flex gap-5 flex-1 justify-end">
             <Link href="/login">

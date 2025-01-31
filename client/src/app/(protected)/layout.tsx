@@ -15,7 +15,7 @@ export default function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
           <DashboardNav />
-          <div className="flex flex-1 flex-col gap-4 p-5 bg-gray-50">
+          <div className="flex flex-1 flex-col gap-4 py-5 px-8 bg-gray-50">
             <Breadcrumbs />
             {children}
           </div>
