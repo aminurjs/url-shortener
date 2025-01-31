@@ -30,7 +30,7 @@ const chartData = [
 const chartConfig = {
   desktop: {
     label: "Desktop",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
@@ -50,7 +50,9 @@ export function LinearAreaChart() {
     <Card>
       <CardHeader>
         <CardTitle>All click - Linear Chart</CardTitle>
-        <CardDescription>Showing total clicks for the last 7 days</CardDescription>
+        <CardDescription>
+          Showing total clicks for the last 7 days
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -76,8 +78,16 @@ export function LinearAreaChart() {
             />{" "}
             <defs>
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.1}
+                />
               </linearGradient>
             </defs>
             <Area
@@ -95,7 +105,8 @@ export function LinearAreaChart() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
-              Visitor increase up by 5.2% this week <TrendingUp className="h-4 w-4" />
+              Visitor increase up by 5.2% this week{" "}
+              <TrendingUp className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
               {formatDate(lastWeekDate)} - {formatDate(currentDate)}

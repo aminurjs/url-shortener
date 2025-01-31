@@ -6,7 +6,7 @@ import { environment } from "../config/environment.js";
 const cookieOptions = {
   httpOnly: true,
   secure: environment.nodeEnv === "production",
-  sameSite: "none",
+  sameSite: "strict",
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 };
 

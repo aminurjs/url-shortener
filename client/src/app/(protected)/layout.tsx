@@ -1,7 +1,9 @@
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
+import Breadcrumbs from "@/components/dashboard/breadcrumbs";
 import DashboardNav from "@/components/dashboard/dashboard-nav";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import ProtectedContext from "@/contexts/ProtectedContext";
+
 export default function DashboardLayout({
   children,
 }: Readonly<{
@@ -14,6 +16,7 @@ export default function DashboardLayout({
         <SidebarInset>
           <DashboardNav />
           <div className="flex flex-1 flex-col gap-4 p-5 bg-gray-50">
+            <Breadcrumbs />
             {children}
           </div>
         </SidebarInset>
