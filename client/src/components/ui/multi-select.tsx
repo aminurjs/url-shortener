@@ -21,6 +21,7 @@ export function MultipleTagSelector({
   name,
   placeholder = "Add a tag...",
   maxTags = Number.POSITIVE_INFINITY,
+  ...field
 }: MultipleTagSelectorProps) {
   const { control } = useFormContext();
   const {
@@ -79,8 +80,9 @@ export function MultipleTagSelector({
         <Input
           placeholder={placeholder}
           onKeyDown={handleKeyDown}
-          className="w-full py-1 px-0 focus:outline-none border-none outline-none focus-visible:ring-0 shadow-none"
+          className="w-full py-1 px-1 focus:outline-none border-none outline-none focus-visible:ring-0 shadow-none"
           disabled={tags.length >= maxTags}
+          {...field}
         />
       </div>
     </div>

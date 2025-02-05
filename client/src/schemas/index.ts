@@ -7,7 +7,11 @@ export const createLinkSchema = z.object({
       /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/,
       "Invalid URL format. Please enter a valid link."
     ),
-  title: z.string().optional(),
+  title: z
+    .string()
+    .max(100, "Title must be less than 100 characters")
+    .optional(),
+
   tags: z
     .array(
       z.object({
@@ -15,8 +19,20 @@ export const createLinkSchema = z.object({
         text: z.string(),
       })
     )
+    .max(10, "Maximum 10 tags allowed")
     .optional(),
-  qrCode: z.boolean().optional(),
+
+  isQrCode: z.boolean().default(false),
+
+  customAlias: z
+    .string()
+    .min(3, "Custom alias must be at least 3 characters")
+    .max(8, "Custom alias must be at most 8 characters")
+    .regex(
+      /^[a-zA-Z0-9-_]+$/,
+      "Only letters, numbers, hyphens, and underscores are allowed"
+    )
+    .optional(),
 });
 
 export const loginSchema = z.object({

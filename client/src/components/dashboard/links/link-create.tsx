@@ -20,31 +20,71 @@ import { createLinkSchema } from "@/schemas";
 import { LinkAlertDialog } from "./success-modal";
 import { useDialog } from "@/hooks/use-dialog";
 import apiInstance from "@/utils/apiInstance";
+import axios from "axios";
+import { useState, useTransition } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LinkCreate() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
   const { isOpen, openDialog, closeDialog } = useDialog();
   const form = useForm<z.infer<typeof createLinkSchema>>({
     resolver: zodResolver(createLinkSchema),
   });
+  const [data, setData] = useState({
+    shortURL: "",
+    qrCode: "",
+  });
 
   const onSubmit = async (values: z.infer<typeof createLinkSchema>) => {
-    try {
-      const response = await apiInstance.post("/links/create", values);
+    startTransition(async () => {
+      try {
+        const payload = {
+          link: values.link,
+          title: values?.title || null,
+          tags: values?.tags || [],
+          isQrCode: values.isQrCode,
+          customAlias: values?.customAlias || null,
+        };
+        const response = await apiInstance.post("/url/create", payload);
 
-      console.log("Response:", response.data);
-    } catch (error) {
-      console.error("API Request Error:", error);
-    }
+        console.log("Response:", response.data);
+
+        if (response.status === 201) {
+          setData(response.data.data);
+          openDialog();
+        }
+      } catch (error) {
+        console.error("API Request Error:", error);
+        if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.data
+        ) {
+          const { message } = error.response.data;
+          if (message === "Custom alias already exists") {
+            form.setError("customAlias", {
+              type: "server",
+              message: message,
+            });
+          } else {
+            toast({
+              variant: "destructive",
+              title: "Uh oh! Something went wrong.",
+            });
+          }
+        }
+      }
+    });
   };
-
+  console.log(data);
   return (
     <div className="">
       <LinkAlertDialog
         isOpen={isOpen}
         closeDialog={closeDialog}
         url="https://example.com/long-url"
-        shortUrl="bit.ly/42CcR2q"
+        shortUrl={data?.shortURL}
       />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -91,6 +131,32 @@ export default function LinkCreate() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="customAlias"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Custom Alias (Optional)</FormLabel>
+                <FormControl>
+                  <div className="w-full p-2 rounded border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 shadow-sm">
+                    <div className="flex flex-nowrap items-center gap-2">
+                      <span className="text-muted-foreground mx-3">
+                        doma.in/
+                      </span>
+                      <Input
+                        placeholder="Enter custom back-half"
+                        type="text"
+                        className="w-full py-1 px-0 focus:outline-none border-none outline-none focus-visible:ring-0 shadow-none"
+                        {...field}
+                      />
+                    </div>
+                  </div>
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
@@ -112,7 +178,7 @@ export default function LinkCreate() {
 
           <FormField
             control={form.control}
-            name="qrCode"
+            name="isQrCode"
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border border-gray-300 p-4 shadow-sm">
                 <div className="space-y-0.5">
@@ -132,7 +198,7 @@ export default function LinkCreate() {
           />
 
           <div className="flex gap-5">
-            <Button className="px-16" type="submit">
+            <Button className="px-16" type="submit" disabled={isPending}>
               Create your link
             </Button>{" "}
             <Button className="px-16" variant="outline" type="button">

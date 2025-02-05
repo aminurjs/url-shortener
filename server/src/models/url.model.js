@@ -9,18 +9,15 @@ const urlSchema = new Schema(
       unique: true,
       default: () => nanoid(8),
     },
-    customAlias: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
     redirectURL: {
       type: String,
       required: true,
     },
     qrCode: {
       type: String,
-      required: true,
+    },
+    title: {
+      type: String,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
