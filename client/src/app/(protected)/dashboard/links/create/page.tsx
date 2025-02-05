@@ -1,4 +1,4 @@
-import LinkCreate from "@/components/dashboard/links/create/link-create";
+import LinkCreate from "@/components/dashboard/links/link-create";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";

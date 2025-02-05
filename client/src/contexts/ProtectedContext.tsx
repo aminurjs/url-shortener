@@ -5,8 +5,8 @@ import React, { useEffect } from "react";
 
 const ProtectedContext = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { isPending, isAuthenticated } = useAuth();
-
+  const { isPending, isAuthenticated, user } = useAuth();
+  console.log(user);
   useEffect(() => {
     if (!isPending && !isAuthenticated) {
       router.replace("/login");
