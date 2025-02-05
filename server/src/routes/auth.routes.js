@@ -8,6 +8,7 @@ import {
   logout,
 } from "../controllers/auth.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
+import { environment } from "../config/environment.js";
 
 const router = Router();
 
@@ -29,7 +30,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/login",
+    failureRedirect: `${environment.cors.origin}/dashboard`,
     session: false,
   }),
   googleCallback

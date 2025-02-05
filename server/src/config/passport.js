@@ -1,15 +1,15 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import User from "../models/user.model.js";
 import { environment } from "./environment.js";
+import { User } from "../models/user.model.js";
 
 export const configurePassport = () => {
-  // Serialize user for the session
+  // Serialize user for session
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
 
-  // Deserialize user from the session
+  // Deserialize user from session
   passport.deserializeUser(async (id, done) => {
     try {
       const user = await User.findById(id);
@@ -30,7 +30,7 @@ export const configurePassport = () => {
       },
       async (req, accessToken, refreshToken, profile, done) => {
         try {
-          // Check if user already exists
+          // Check if user exists by Google ID or email
           let user = await User.findOne({
             $or: [{ googleId: profile.id }, { email: profile.emails[0].value }],
           });
@@ -42,6 +42,8 @@ export const configurePassport = () => {
               name: profile.displayName,
               email: profile.emails[0].value,
               avatar: profile.photos[0].value,
+              provider: "google",
+              isEmailVerified: true, // Google emails are already verified
             });
 
             await user.save();

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 import { environment } from "../config/environment.js";
 
 export const protect = async (req, res, next) => {
