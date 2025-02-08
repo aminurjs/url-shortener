@@ -12,15 +12,15 @@ export const createLinkSchema = z.object({
     .max(100, "Title must be less than 100 characters")
     .optional(),
 
-  tags: z
-    .array(
-      z.object({
-        id: z.number(),
-        text: z.string(),
-      })
-    )
-    .max(10, "Maximum 10 tags allowed")
-    .optional(),
+  // tags: z
+  //   .array(
+  //     z.object({
+  //       id: z.number(),
+  //       text: z.string(),
+  //     })
+  //   )
+  //   .max(10, "Maximum 10 tags allowed")
+  //   .optional(),
 
   isQrCode: z.boolean().default(false),
 

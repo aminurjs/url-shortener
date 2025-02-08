@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MultipleTagSelector } from "@/components/ui/multi-select";
 import { Switch } from "@/components/ui/switch";
 import { createLinkSchema } from "@/schemas";
 import { LinkAlertDialog } from "./success-modal";
@@ -42,7 +41,7 @@ export default function LinkCreate() {
         const payload = {
           link: values.link,
           title: values?.title || null,
-          tags: values?.tags || [],
+          tags: [],
           isQrCode: values.isQrCode,
           customAlias: values?.customAlias || null,
         };
@@ -83,7 +82,6 @@ export default function LinkCreate() {
       <LinkAlertDialog
         isOpen={isOpen}
         closeDialog={closeDialog}
-        url="https://example.com/long-url"
         shortUrl={data?.shortURL}
       />
       <Form {...form}>
@@ -158,7 +156,7 @@ export default function LinkCreate() {
             )}
           />
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="tags"
             render={() => (
@@ -174,7 +172,7 @@ export default function LinkCreate() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormField
             control={form.control}
