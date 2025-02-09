@@ -5,16 +5,13 @@ import {
   LinkIcon,
   MousePointerClick,
 } from "lucide-react";
-import Image from "next/image";
 import React from "react";
 import { Button } from "../ui/button";
 import { LinearAreaChart } from "./area-chart";
-import Link from "next/link";
-
 export const DashboardHome = () => {
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-md p-5 grid grid-cols-2 gap-5 shadow-sm">
+      {/* <div className="bg-white rounded-md p-5 grid grid-cols-2 gap-5 shadow-sm">
         <div className="rounded-md  flex items-center border border-muted">
           <div className="w-1/2 px-2 bg-gray-100">
             <Image
@@ -57,7 +54,7 @@ export const DashboardHome = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="bg-white rounded-md p-5 grid grid-cols-3 gap-5 shadow-sm">
         <div className="bg-slate-50 rounded-md p-5">
           <h3 className="font-medium text-lg">All URls</h3>

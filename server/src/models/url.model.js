@@ -9,6 +9,11 @@ const urlSchema = new Schema(
       unique: true,
       default: () => nanoid(8),
     },
+    shortURL: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     redirectURL: {
       type: String,
       required: true,
@@ -17,6 +22,9 @@ const urlSchema = new Schema(
       type: String,
     },
     title: {
+      type: String,
+    },
+    logo: {
       type: String,
     },
     userId: {

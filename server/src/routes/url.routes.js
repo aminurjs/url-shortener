@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { createUrl, getMetadata } from "../controllers/url.controller.js";
+import {
+  createUrl,
+  getMetadata,
+  getUrls,
+} from "../controllers/url.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 const router = Router();
 
@@ -19,5 +23,6 @@ router.post("/get-metadata", async (req, res) => {
 });
 
 router.post("/create", protect, createUrl);
+router.get("/all", protect, getUrls);
 
 export default router;
