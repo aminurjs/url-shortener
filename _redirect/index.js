@@ -16,10 +16,10 @@ connectToMongoDB(process.env.MONGODB_URI).then(() => {
 
 app.get("/:shortId", handleGetRedirect);
 
-app.use("/url", urlRouter);
+// app.use("/url", urlRouter);
 
 app.get("/", (req, res) => {
-  res.status(200).send("Welcome to our web app!");
+  res.redirect("https://shorten-x.vercel.app");
 });
 
 app.use((req, res) => {

@@ -63,33 +63,71 @@ async function handleGetAnalytics(req, res) {
 
 async function handleGetRedirect(req, res) {
   const shortId = req.params.shortId;
-
-  const deviceType = req.device.type;
+  const deviceType = req.device.type || "unknown";
   const referer = req.headers.referer || "direct";
-
   const ipAddress =
     req.headers["cf-connecting-ip"] ||
     req.headers["x-real-ip"] ||
     req.headers["x-forwarded-for"] ||
     req.socket.remoteAddress ||
     "";
+
   const location = await getLocationFromIP(ipAddress);
 
-  const entry = await URL.findOneAndUpdate(
-    { shortId },
-    {
-      $push: {
-        visitHistory: { timestamp: Date.now(), location, ipAddress, device: deviceType, referer },
-      },
-    }
-  );
-  if (entry) {
-    return res.redirect(entry.redirectURL);
-  } else {
-    return res.status(404).json({
-      message: "Invalid url.",
-    });
+  const userAgent = req.headers["user-agent"] || "unknown";
+  const browser = userAgent.includes("Chrome")
+    ? "Chrome"
+    : userAgent.includes("Firefox")
+    ? "Firefox"
+    : userAgent.includes("Safari")
+    ? "Safari"
+    : userAgent.includes("Edge")
+    ? "Edge"
+    : "Other";
+
+  const uniqueId = `${ipAddress}-${userAgent}`;
+
+  const entry = await URL.findOne({ shortId });
+
+  if (!entry) {
+    return res.status(404).json({ message: "Invalid URL." });
   }
+
+  let isNewVisitor = false;
+  if (!entry.uniqueVisitorIds.includes(uniqueId)) {
+    isNewVisitor = true;
+  }
+
+  const dateKey = new Date().toISOString().slice(0, 13);
+
+  await URL.findByIdAndUpdate(entry._id, {
+    $push: {
+      visitHistory: {
+        timestamp: Date.now(),
+        location,
+        ipAddress,
+        device: deviceType,
+        browser,
+        referer,
+      },
+    },
+    $inc: {
+      totalClicks: 1,
+      [`browserStats.${browser}`]: 1,
+      [`deviceStats.${deviceType}`]: 1,
+      [`locationStats.${location?.country || "unknown"}`]: 1,
+      [`clickTrends.${dateKey}`]: 1,
+      [`refererStats.${referer}`]: 1,
+      ...(isNewVisitor ? { uniqueVisitors: 1 } : {}),
+    },
+    ...(isNewVisitor ? { $addToSet: { uniqueVisitorIds: uniqueId } } : {}),
+  });
+
+  return res.redirect(entry.redirectURL);
 }
 
-module.exports = { handleGenerateNewShortUrl, handleGetAnalytics, handleGetRedirect };
+module.exports = {
+  handleGenerateNewShortUrl,
+  handleGetAnalytics,
+  handleGetRedirect,
+};

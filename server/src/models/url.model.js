@@ -18,28 +18,17 @@ const urlSchema = new Schema(
       type: String,
       required: true,
     },
-    qrCode: {
-      type: String,
-    },
-    title: {
-      type: String,
-    },
-    logo: {
-      type: String,
-    },
+    qrCode: { type: String },
+    title: { type: String },
+    logo: { type: String },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    expirationDate: {
-      type: Date,
-      default: null,
-    },
-    totalClicks: {
-      type: Number,
-      default: 0,
-    },
+    expirationDate: { type: Date, default: null },
+    totalClicks: { type: Number, default: 0 },
+
     visitHistory: [
       {
         timestamp: { type: Date, default: Date.now },
@@ -56,6 +45,19 @@ const urlSchema = new Schema(
         },
       },
     ],
+
+    uniqueVisitors: { type: Number, default: 0 },
+    uniqueVisitorIds: [{ type: String }],
+
+    browserStats: { type: Map, of: Number, default: {} },
+
+    deviceStats: { type: Map, of: Number, default: {} },
+
+    locationStats: { type: Map, of: Number, default: {} },
+
+    clickTrends: { type: Map, of: Number, default: {} },
+
+    refererStats: { type: Map, of: Number, default: {} },
   },
   { timestamps: true }
 );

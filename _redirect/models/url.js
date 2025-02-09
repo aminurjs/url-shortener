@@ -1,8 +1,15 @@
 const mongoose = require("mongoose");
+const nanoid = require("../lib/shortId");
 
 const urlSchema = new mongoose.Schema(
   {
     shortId: {
+      type: String,
+      required: true,
+      unique: true,
+      default: () => nanoid(8),
+    },
+    shortURL: {
       type: String,
       required: true,
       unique: true,
@@ -11,15 +18,24 @@ const urlSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    qrCode: {
-      type: String,
+    qrCode: { type: String },
+    title: { type: String },
+    logo: { type: String },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
+    expirationDate: { type: Date, default: null },
+    totalClicks: { type: Number, default: 0 },
+
     visitHistory: [
       {
-        timestamp: { type: Date },
+        timestamp: { type: Date, default: Date.now },
         ipAddress: { type: String },
         device: { type: String },
+        browser: { type: String },
+        os: { type: String },
         referer: { type: String },
         location: {
           city: { type: String, default: null },
@@ -29,10 +45,18 @@ const urlSchema = new mongoose.Schema(
         },
       },
     ],
+
+    uniqueVisitors: { type: Number, default: 0 },
+    uniqueVisitorIds: [{ type: String }],
+    browserStats: { type: Map, of: Number, default: {} },
+    deviceStats: { type: Map, of: Number, default: {} },
+    locationStats: { type: Map, of: Number, default: {} },
+    clickTrends: { type: Map, of: Number, default: {} },
+    refererStats: { type: Map, of: Number, default: {} },
   },
   { timestamps: true }
 );
 
-const URL = mongoose.model("url", urlSchema);
+const URL = mongoose.model("URL", urlSchema);
 
 module.exports = URL;
