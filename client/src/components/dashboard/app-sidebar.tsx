@@ -9,7 +9,6 @@ import {
   Home,
   Link,
   QrCode,
-  Settings2,
 } from "lucide-react";
 
 import { NavMain } from "@/components/dashboard/nav-main";
@@ -71,11 +70,11 @@ const data = {
       url: "/dashboard/analytics",
       icon: ChartArea,
     },
-    {
-      title: "Settings",
-      url: "/dashboard/settings",
-      icon: Settings2,
-    },
+    // {
+    //   title: "Settings",
+    //   url: "/dashboard/settings",
+    //   icon: Settings2,
+    // },
   ],
 };
 

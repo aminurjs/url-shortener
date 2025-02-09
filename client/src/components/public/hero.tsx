@@ -43,7 +43,11 @@ const Hero = () => {
     );
 
     // Animation sequence
-    tl.fromTo(taglineRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 })
+    tl.fromTo(
+      taglineRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6 }
+    )
       .fromTo(
         headingRef.current,
         { opacity: 0, y: 20 },
@@ -95,9 +99,13 @@ const Hero = () => {
             with our powerful URL Shortener
           </span>
         </h1>
-        <p ref={descriptionRef} className="text-pretty text-lg max-w-2xl opacity-0">
-          Spark instant connections with your audience using trimmed, trustworthy, and trackable
-          links within the Bitly Connections Platform.
+        <p
+          ref={descriptionRef}
+          className="text-pretty text-lg max-w-2xl opacity-0"
+        >
+          Spark instant connections with your audience using trimmed,
+          trustworthy, and trackable links within the Shorten Connections
+          Platform.
         </p>
         <div
           ref={inputGroupRef}
@@ -119,7 +127,12 @@ const Hero = () => {
             ref={imageRef}
             className="relative max-w-5xl max-md:px-5 rounded-lg mx-auto opacity-0"
           >
-            <Image src="/assets/hero-img.png" width={1200} height={1200} alt="hero img" />
+            <Image
+              src="/assets/hero-img.png"
+              width={1200}
+              height={1200}
+              alt="hero img"
+            />
             <BorderBeam />
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white bg-[length:100%_100%] bg-[gradient-to-b from-transparent 0% 90%, white 90%]" />

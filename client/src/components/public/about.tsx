@@ -21,7 +21,7 @@ const data = [
     subtitle: "Understand what clicks with your audience",
     image: "/assets/02_feature-img_desktop@2x.png",
     description:
-      "Watch your engagement grow with the Bitly URL shortener and discover which channels resonate most with your audience.",
+      "Watch your engagement grow with the Shorten URL shortener and discover which channels resonate most with your audience.",
     details: [
       "Observe click statistics and collect real-time data from every click.",
       "Compare campaign performance across online and offline channels.",
@@ -38,7 +38,7 @@ const data = [
       "Add UTM parameters to your links to track your marketing campaigns and improve customer targeting.",
       "Redirect link destinations at any time to keep your audience clicking on your latest and greatest content.",
       "Shorten multiple links in bulk to build rapid-fire connections.",
-      "Connect to other tools using Bitly’s integrations to optimize your workflow.",
+      "Connect to other tools using Shorten’s integrations to optimize your workflow.",
     ],
   },
 ];
@@ -56,7 +56,9 @@ const AboutLinks = () => {
           <div>
             <div className="border-b border-gray-200 pb-4 mb-4">
               <p className="mb-2 uppercase">{title}</p>
-              <h2 className="text-primary text-4xl font-semibold mb-2">{subtitle}</h2>
+              <h2 className="text-primary text-4xl font-semibold mb-2">
+                {subtitle}
+              </h2>
               <p className="text-muted-foreground">{description}</p>
             </div>
             <ul>

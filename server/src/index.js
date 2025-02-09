@@ -9,6 +9,7 @@ import { connectDB } from "./config/database.js";
 import { configurePassport } from "./config/passport.js";
 import { environment } from "./config/environment.js";
 import authRoutes from "./routes/auth.routes.js";
+import urlRoutes from "./routes/url.routes.js";
 
 // Connect to database
 connectDB();
@@ -17,7 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(helmet()); // Helps secure Express apps by setting various HTTP headers
+app.use(helmet());
 app.use(
   cors({
     origin: environment.cors.origin,
@@ -26,10 +27,8 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 
-// Sanitize inputs to prevent NoSQL injection
 app.use(mongoSanitize());
 
-// Session middleware (required for passport)
 app.use(
   session({
     secret: environment.jwt.secret,
@@ -37,7 +36,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: environment.nodeEnv === "production",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
@@ -49,6 +48,7 @@ app.use(passport.session());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/url", urlRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

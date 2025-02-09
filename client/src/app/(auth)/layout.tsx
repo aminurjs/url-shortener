@@ -1,11 +1,15 @@
-import React from "react";
+import WithoutAuthContext from "@/contexts/WithoutAuthContext";
 
 const AuthLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return <div>{children}</div>;
+  return (
+    <div>
+      <WithoutAuthContext>{children}</WithoutAuthContext>
+    </div>
+  );
 };
 
 export default AuthLayout;

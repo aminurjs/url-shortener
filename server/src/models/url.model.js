@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const nanoid = require("../lib/shortId");
+import mongoose, { Schema } from "mongoose";
+import { nanoid } from "nanoid";
 
-const urlSchema = new mongoose.Schema(
+const urlSchema = new Schema(
   {
     shortId: {
       type: String,
@@ -48,10 +48,15 @@ const urlSchema = new mongoose.Schema(
 
     uniqueVisitors: { type: Number, default: 0 },
     uniqueVisitorIds: [{ type: String }],
+
     browserStats: { type: Map, of: Number, default: {} },
+
     deviceStats: { type: Map, of: Number, default: {} },
+
     locationStats: { type: Map, of: Number, default: {} },
+
     clickTrends: { type: Map, of: Number, default: {} },
+
     refererStats: { type: Map, of: Number, default: {} },
   },
   { timestamps: true }
@@ -59,4 +64,4 @@ const urlSchema = new mongoose.Schema(
 
 const URL = mongoose.model("URL", urlSchema);
 
-module.exports = URL;
+export default URL;

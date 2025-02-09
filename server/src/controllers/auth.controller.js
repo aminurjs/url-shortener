@@ -1,18 +1,20 @@
-import User from "../models/user.model.js";
-import { generateToken } from "../utils/token.js";
+import { User } from "../models/user.model.js";
+import {
+  cookieOptions,
+  generateEmailVerificationToken,
+  generateToken,
+  sendVerificationEmail,
+} from "../utils/token.js";
 import { environment } from "../config/environment.js";
-
-// Cookie options
-const cookieOptions = {
-  httpOnly: true,
-  secure: environment.nodeEnv === "production",
-  sameSite: "strict",
-  maxAge: 24 * 60 * 60 * 1000, // 24 hours
-};
 
 export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
+
+    // Validate input
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
     // Check if user already exists
     let user = await User.findOne({ email });
@@ -20,7 +22,7 @@ export const register = async (req, res, next) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create new user
+    // Create new user (not verified yet)
     user = new User({
       name,
       email,
@@ -30,20 +32,32 @@ export const register = async (req, res, next) => {
 
     await user.save();
 
-    // Generate token and set as cookie
+    // Generate email verification token
+    const verificationToken = generateEmailVerificationToken(user._id);
+
+    // Send verification email
+    await sendVerificationEmail(email, verificationToken);
+
+    // Generate auth token
     const token = generateToken(user);
+
+    // Set token as HTTP-only cookie
     res.cookie("token", token, cookieOptions);
 
     res.status(201).json({
-      message: "User registered successfully",
+      message:
+        "User registered successfully. Please check your email for the verification link.",
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
+        isEmailVerified: user.isEmailVerified,
       },
     });
   } catch (error) {
-    next(error);
+    res
+      .status(500)
+      .json({ message: "Error creating user. Please try again later." });
   }
 };
 
@@ -76,7 +90,7 @@ export const login = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Login failed. Please try again later." });
   }
 };
 
@@ -91,7 +105,7 @@ export const googleCallback = (req, res) => {
 
 export const getCurrentUser = (req, res) => {
   res.json({
-    user: { id: req.user._id, name: req.user.name, email: req.user.email },
+    user: req.user,
   });
 };
 
