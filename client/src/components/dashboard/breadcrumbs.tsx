@@ -14,7 +14,15 @@ import Link from "next/link";
 
 const Breadcrumbs = () => {
   const pathname = usePathname();
-  const pathSegments = pathname.split("/").filter((segment) => segment);
+  let pathSegments = pathname.split("/").filter((segment) => segment);
+
+  if (pathname === "/dashboard") {
+    return null;
+  }
+
+  if (pathSegments[0] === "dashboard") {
+    pathSegments = pathSegments.slice(1);
+  }
 
   return (
     <div>
@@ -28,11 +36,9 @@ const Breadcrumbs = () => {
             </BreadcrumbLink>
           </BreadcrumbItem>
 
-          {pathSegments.slice(1).map((segment, index) => {
-            const url = `/dashboard/${pathSegments
-              .slice(1, index + 2)
-              .join("/")}`;
-            const isLast = index === pathSegments.length - 2;
+          {pathSegments.map((segment, index) => {
+            const url = `/${pathSegments.slice(0, index + 1).join("/")}`;
+            const isLast = index === pathSegments.length - 1;
 
             return (
               <BreadcrumbItem key={url}>
@@ -56,15 +62,3 @@ const Breadcrumbs = () => {
 };
 
 export default Breadcrumbs;
-
-<Breadcrumb>
-  <BreadcrumbList>
-    <BreadcrumbItem className="hidden md:block">
-      <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator className="hidden md:block" />
-    <BreadcrumbItem>
-      <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-    </BreadcrumbItem>
-  </BreadcrumbList>
-</Breadcrumb>;

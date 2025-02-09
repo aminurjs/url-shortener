@@ -39,6 +39,7 @@ type LinkData = {
   shortURL: string;
   redirectURL: string;
   createdAt: string;
+  shortId: string;
 };
 
 const Links = () => {
@@ -200,7 +201,7 @@ const Links = () => {
                       >
                         <DropdownMenuItem className="hover:bg-gray-100">
                           <Link
-                            href={`/dashboard/links/edit/${item._id}`}
+                            href={`/dashboard/links/edit/${item.shortId}`}
                             className="px-4 block"
                           >
                             Edit
