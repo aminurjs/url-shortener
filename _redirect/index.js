@@ -19,7 +19,7 @@ app.get("/:shortId", handleGetRedirect);
 // app.use("/url", urlRouter);
 
 app.get("/", (req, res) => {
-  res.status(200).send("Welcome to our web app!");
+  res.status(200).redirect("https://shorten-x.vercel.app");
 });
 
 app.use((req, res) => {
