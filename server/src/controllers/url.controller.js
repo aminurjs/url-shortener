@@ -275,7 +275,6 @@ export const getAllLinksAnalytics = async (req, res) => {
       }));
 
     // Get click data for the last 30 days
-    const clicksData = [];
     const today = new Date();
     const thirtyDaysAgo = new Date(today);
     thirtyDaysAgo.setDate(today.getDate() - 30);
@@ -293,24 +292,28 @@ export const getAllLinksAnalytics = async (req, res) => {
 
     // Count clicks per day more efficiently
     urls.forEach((url) => {
-      if (url.visitHistory && url.visitHistory.length > 0) {
+      if (
+        url.visitHistory &&
+        Array.isArray(url.visitHistory) &&
+        url.visitHistory.length > 0
+      ) {
         url.visitHistory.forEach((visit) => {
-          const visitDate = new Date(visit.timestamp);
-          const dateStr = visitDate.toISOString().split("T")[0];
-          if (dateMap[dateStr] !== undefined) {
-            dateMap[dateStr]++;
+          if (visit && visit.timestamp) {
+            const visitDate = new Date(visit.timestamp);
+            const dateStr = visitDate.toISOString().split("T")[0];
+            if (dateMap[dateStr] !== undefined) {
+              dateMap[dateStr]++;
+            }
           }
         });
       }
     });
 
     // Convert to array format for chart data
-    for (const [date, clicks] of Object.entries(dateMap)) {
-      clicksData.push({
-        date,
-        clicks,
-      });
-    }
+    const clicksData = Object.entries(dateMap).map(([date, clicks]) => ({
+      date,
+      clicks,
+    }));
 
     // Sort chronologically
     clicksData.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -334,21 +337,33 @@ export const getAllLinksAnalytics = async (req, res) => {
 
     urls.forEach((url) => {
       // Process browser stats
-      if (url.browserStats && url.browserStats.size > 0) {
+      if (
+        url.browserStats &&
+        url.browserStats instanceof Map &&
+        url.browserStats.size > 0
+      ) {
         for (const [browser, count] of url.browserStats.entries()) {
           browserStats[browser] = (browserStats[browser] || 0) + count;
         }
       }
 
       // Process device stats
-      if (url.deviceStats && url.deviceStats.size > 0) {
+      if (
+        url.deviceStats &&
+        url.deviceStats instanceof Map &&
+        url.deviceStats.size > 0
+      ) {
         for (const [device, count] of url.deviceStats.entries()) {
           deviceStats[device] = (deviceStats[device] || 0) + count;
         }
       }
 
       // Process location stats
-      if (url.locationStats && url.locationStats.size > 0) {
+      if (
+        url.locationStats &&
+        url.locationStats instanceof Map &&
+        url.locationStats.size > 0
+      ) {
         for (const [location, count] of url.locationStats.entries()) {
           locationStats[location] = (locationStats[location] || 0) + count;
         }
@@ -399,13 +414,17 @@ export const getSingleLinkAnalytics = async (req, res) => {
     }
 
     // Count clicks per day from visit history
-    link.visitHistory.forEach((visit) => {
-      const visitDate = new Date(visit.timestamp);
-      if (visitDate >= thirtyDaysAgo) {
-        const dateString = visitDate.toISOString().split("T")[0];
-        clicksPerDay[dateString] = (clicksPerDay[dateString] || 0) + 1;
-      }
-    });
+    if (Array.isArray(link.visitHistory)) {
+      link.visitHistory.forEach((visit) => {
+        if (visit && visit.timestamp) {
+          const visitDate = new Date(visit.timestamp);
+          if (visitDate >= thirtyDaysAgo) {
+            const dateString = visitDate.toISOString().split("T")[0];
+            clicksPerDay[dateString] = (clicksPerDay[dateString] || 0) + 1;
+          }
+        }
+      });
+    }
 
     // Create clicksData array for new format
     const clicksData = Object.entries(clicksPerDay).map(([date, clicks]) => ({
@@ -413,20 +432,42 @@ export const getSingleLinkAnalytics = async (req, res) => {
       clicks,
     }));
 
-    // Referrer data
-    const refererData = Object.fromEntries(link.refererStats || []);
+    // Sort the clicks data chronologically
+    clicksData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Safely convert Map to object for referer data
+    let refererData = {};
+    if (link.refererStats && link.refererStats instanceof Map) {
+      refererData = Object.fromEntries(link.refererStats);
+    }
+
+    // Safely convert Maps to objects for other stats
+    const deviceData =
+      link.deviceStats instanceof Map
+        ? Object.fromEntries(link.deviceStats)
+        : {};
+
+    const browserData =
+      link.browserStats instanceof Map
+        ? Object.fromEntries(link.browserStats)
+        : {};
+
+    const locationData =
+      link.locationStats instanceof Map
+        ? Object.fromEntries(link.locationStats)
+        : {};
 
     res.status(200).json({
       linkId: link._id,
       shortId: link.shortId,
       title: link.title || link.redirectURL,
-      totalClicks: link.totalClicks,
-      uniqueVisitors: link.uniqueVisitors,
+      totalClicks: link.totalClicks || 0,
+      uniqueVisitors: link.uniqueVisitors || 0,
       clicksData,
       clicksPerDay,
-      deviceData: Object.fromEntries(link.deviceStats || []),
-      browserData: Object.fromEntries(link.browserStats || []),
-      locationData: Object.fromEntries(link.locationStats || []),
+      deviceData,
+      browserData,
+      locationData,
       refererData,
       logo: link.logo || null,
     });
