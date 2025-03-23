@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
@@ -189,8 +190,8 @@ export default function QRCodesGrid() {
           ) : (
             <>
               <p className="text-muted-foreground">
-                You don't have any QR codes yet. Create shortened URLs with QR
-                codes enabled to see them here.
+                You don&apos;t have any QR codes yet. Create shortened URLs with
+                QR codes enabled to see them here.
               </p>
               <Button className="mt-4" asChild>
                 <Link href="/dashboard/links/create?qrcode=true">
