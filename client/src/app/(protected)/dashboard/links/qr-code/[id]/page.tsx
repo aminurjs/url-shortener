@@ -1,30 +1,30 @@
 import React from "react";
-import LinkEdit from "@/components/dashboard/links/link-edit";
+import QRCodeView from "@/components/dashboard/links/qr-code-view";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface EditPageProps {
+interface QRCodePageProps {
   params: {
     id: string;
   };
 }
 
-const EditPage = ({ params }: EditPageProps) => {
+const QRCodePage = ({ params }: QRCodePageProps) => {
   return (
     <div>
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-primary text-4xl font-semibold">Edit Link</h1>
+          <h1 className="text-primary text-4xl font-semibold">QR Code</h1>
           <Button variant="outline">
             <Link href="/dashboard/links">Back to Links</Link>
           </Button>
         </div>
         <div className="p-10 bg-white shadow rounded-md">
-          <LinkEdit id={params.id} />
+          <QRCodeView id={params.id} />
         </div>
       </div>
     </div>
   );
 };
 
-export default EditPage;
+export default QRCodePage;

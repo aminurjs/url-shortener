@@ -3,6 +3,12 @@ import {
   createUrl,
   getMetadata,
   getUrls,
+  toggleArchiveStatus,
+  deleteUrl,
+  getUrlById,
+  updateUrl,
+  getAllLinksAnalytics,
+  getSingleLinkAnalytics,
 } from "../controllers/url.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 const router = Router();
@@ -24,5 +30,11 @@ router.post("/get-metadata", async (req, res) => {
 
 router.post("/create", protect, createUrl);
 router.get("/all", protect, getUrls);
+router.get("/analytics", protect, getAllLinksAnalytics);
+router.get("/:id/analytics", protect, getSingleLinkAnalytics);
+router.get("/:id", protect, getUrlById);
+router.put("/:id", protect, updateUrl);
+router.put("/toggle-archive/:id", protect, toggleArchiveStatus);
+router.delete("/delete/:id", protect, deleteUrl);
 
 export default router;

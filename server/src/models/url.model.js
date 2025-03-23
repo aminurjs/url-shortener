@@ -21,6 +21,10 @@ const urlSchema = new Schema(
     qrCode: { type: String },
     title: { type: String },
     logo: { type: String },
+    archived: {
+      type: Boolean,
+      default: false,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

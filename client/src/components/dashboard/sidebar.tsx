@@ -1,5 +1,17 @@
-import { Home, LineChart, Package, Package2, Settings, ShoppingCart, Users2 } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Home,
+  LineChart,
+  Package,
+  Package2,
+  Settings,
+  ShoppingCart,
+  Users2,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import Link from "next/link";
 
@@ -65,7 +77,7 @@ const Sidebar = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
-              href="#"
+              href="/dashboard/analytics"
               className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
             >
               <LineChart className="h-5 w-5" />

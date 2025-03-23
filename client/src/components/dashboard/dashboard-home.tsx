@@ -1,137 +1,249 @@
 "use client";
-import {
-  CalendarCheck,
-  Check,
-  LinkIcon,
-  MousePointerClick,
-} from "lucide-react";
-import React from "react";
-import { Button } from "../ui/button";
+
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import Link from "next/link";
 import { LinearAreaChart } from "./area-chart";
+import apiInstance from "@/utils/apiInstance";
+
 export const DashboardHome = () => {
-  return (
-    <div className="space-y-6">
-      {/* <div className="bg-white rounded-md p-5 grid grid-cols-2 gap-5 shadow-sm">
-        <div className="rounded-md  flex items-center border border-muted">
-          <div className="w-1/2 px-2 bg-gray-100">
-            <Image
-              src="/assets/dashboard/dashboard_links.png"
-              alt="link"
-              width={600}
-              height={400}
-            />
-          </div>
-          <div className="flex items-center justify-center flex-col gap-3 w-1/2 ">
-            <h4 className="font-medium">Make URL is short</h4>
-            <Button
-              variant={"outline"}
-              size={"sm"}
-              className="text-xs px-8 border-primary text-primary"
-              asChild
-            >
-              <Link href="/dashboard/links"> Go to link</Link>
-            </Button>
-          </div>
-        </div>
-        <div className="rounded-md  flex items-center border border-muted">
-          <div className="w-1/2 px-2 bg-gray-100">
-            <Image
-              src="/assets/dashboard/dashboard_qrcs.png"
-              alt="link"
-              width={600}
-              height={400}
-            />
-          </div>
-          <div className="flex items-center justify-center flex-col gap-3 w-1/2 ">
-            <h4 className="font-medium">Make it scannable</h4>
-            <Button
-              variant={"outline"}
-              size={"sm"}
-              className="text-xs px-8 border-primary text-primary"
-              asChild
-            >
-              <Link href="/dashboard/qr-codes"> Go to qr-codes</Link>
-            </Button>
-          </div>
-        </div>
-      </div> */}
-      <div className="bg-white rounded-md p-5 grid grid-cols-3 gap-5 shadow-sm">
-        <div className="bg-slate-50 rounded-md p-5">
-          <h3 className="font-medium text-lg">All URls</h3>
-          <div className="flex items-center justify-between">
-            <h4 className="text-primary text-xl">0</h4>
-            <span className="rounded-full p-2 bg-white">
-              <LinkIcon className="h-4 w-4" />
-            </span>
-          </div>
-        </div>
-        <div className="bg-green-50 rounded-md p-5">
-          <h3 className="font-medium text-lg">Total Clicks</h3>
-          <div className="flex items-center justify-between">
-            <h4 className="text-primary text-xl">0</h4>
-            <span className="rounded-full p-2 bg-white">
-              <MousePointerClick className="h-4 w-4" />
-            </span>
-          </div>
-        </div>
-        <div className="bg-blue-50 rounded-md p-5">
-          <h3 className="font-medium text-lg">Links added this month</h3>
-          <div className="flex items-center justify-between">
-            <h4 className="text-primary text-xl">0</h4>
-            <span className="rounded-full p-2 bg-white">
-              <CalendarCheck className="h-4 w-4" />
-            </span>
-          </div>
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<{
+    totalLinks: number;
+    totalClicks: number;
+    linksThisMonth: number;
+    clicksData: { date: string; clicks: number }[] | undefined;
+    topLinks?: {
+      _id: string;
+      shortId: string;
+      title: string;
+      clicks: number;
+      logo?: string;
+    }[];
+  }>({
+    totalLinks: 0,
+    totalClicks: 0,
+    linksThisMonth: 0,
+    clicksData: undefined,
+    topLinks: [],
+  });
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchDashboardStats = async () => {
+    try {
+      setError(null);
+      const response = await apiInstance.get("/url/analytics");
+
+      if (response.data) {
+        const {
+          totalLinks,
+          totalClicks,
+          linksThisMonth,
+          clicksData,
+          clicksPerDay,
+          topLinks,
+        } = response.data;
+
+        // Process clicksData from API response
+        let processedClicksData = clicksData;
+
+        // If we have clicksPerDay but not clicksData, convert it
+        if (!processedClicksData && clicksPerDay) {
+          processedClicksData = Object.entries(clicksPerDay)
+            .map(([date, clicks]) => ({
+              date,
+              clicks: Number(clicks),
+            }))
+            .sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+            );
+        }
+
+        // If we still don't have data, create empty data with the last 30 days
+        if (!processedClicksData || processedClicksData.length === 0) {
+          processedClicksData = generateLastThirtyDaysData();
+        }
+
+        setStats({
+          totalLinks: totalLinks || 0,
+          totalClicks: totalClicks || 0,
+          linksThisMonth: linksThisMonth || 0,
+          clicksData: processedClicksData,
+          topLinks: topLinks || [],
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      setError("Failed to load dashboard data. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Generate default data for the last 30 days if no data is provided
+  const generateLastThirtyDaysData = () => {
+    const result = [];
+    const today = new Date();
+
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      result.push({
+        date: `${year}-${month}-${day}`,
+        clicks: 0,
+      });
+    }
+
+    return result;
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  // Set up polling for real-time updates
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchDashboardStats();
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="px-1">
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="animate-spin mr-2 h-6 w-6" />
+          <span>Loading dashboard data...</span>
         </div>
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-white rounded-lg shadow-sm text-center">
+        <div className="text-destructive mb-2">⚠️ {error}</div>
+        <Button variant="outline" onClick={fetchDashboardStats}>
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Links
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.totalLinks.toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Clicks
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.totalClicks.toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Links Added This Month
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.linksThisMonth.toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="flex gap-6">
         <div className="w-2/3">
-          <LinearAreaChart />
+          <LinearAreaChart data={stats.clicksData} />
         </div>
         <div className="w-1/3">
           <div className="bg-white rounded-md p-5 shadow-sm">
-            {" "}
-            <h2 className="text-lg font-semibold text-primary mb-2">
-              Upgrade Your Plan
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Get access to premium features and enhance your experience.
-            </p>
-            <div className="flex justify-center items-baseline mb-4">
-              <span className="text-2xl font-bold text-primary">$19.99</span>
-              <span className="text-sm text-gray-500 ml-1">/month</span>
-            </div>{" "}
-            <ul className="text-left mb-4">
-              <li className="flex items-center text-sm text-gray-700 mb-2">
-                <Check className="h-5 w-5 text-green-500 mr-2" />
-                Custom Branded URLs
-              </li>
-              <li className="flex items-center text-sm text-gray-700 mb-2">
-                <Check className="h-5 w-5 text-green-500 mr-2" />
-                Dynamic QR Codes
-              </li>
-              <li className="flex items-center text-sm text-gray-700 mb-2">
-                <Check className="h-5 w-5 text-green-500 mr-2" />
-                Advanced Link Analytics
-              </li>
-              <li className="flex items-center text-sm text-gray-700 mb-2">
-                <Check className="h-5 w-5 text-green-500 mr-2" />
-                Password Protection for Links
-              </li>
-              <li className="flex items-center text-sm text-gray-700 mb-2">
-                <Check className="h-5 w-5 text-green-500 mr-2" />
-                Link Expiration Settings
-              </li>
-              <li className="flex items-center text-sm text-gray-700 mb-2">
-                <Check className="h-5 w-5 text-green-500 mr-2" />
-                Bulk URL Shortening
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <Check className="h-5 w-5 text-green-500 mr-2" />
-                API Access for Automation
-              </li>
-            </ul>
-            <Button className="w-full">Upgrade Now</Button>
+            <h2 className="font-medium text-xl mb-4">Top Links</h2>
+            <div className="space-y-4">
+              {stats.topLinks && stats.topLinks.length > 0 ? (
+                stats.topLinks.map((link, index) => (
+                  <div
+                    key={link._id || index}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 p-1">
+                      {link?.logo ? (
+                        <Image
+                          src={`/api/proxyImage?imageUrl=${encodeURIComponent(
+                            link.logo
+                          )}`}
+                          alt="link"
+                          width={20}
+                          height={20}
+                          className="rounded-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src =
+                              "/assets/favicon.png";
+                            (e.target as HTMLImageElement).className =
+                              "opacity-70";
+                          }}
+                        />
+                      ) : (
+                        <Image
+                          src="/assets/favicon.png"
+                          alt="link"
+                          className="opacity-70"
+                          width={20}
+                          height={20}
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <Link
+                        href={`/dashboard/links/${link.shortId}`}
+                        className="block font-medium text-sm truncate hover:underline"
+                        title={link.title}
+                      >
+                        {link.title}
+                      </Link>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {link.clicks.toLocaleString()} clicks
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-muted-foreground text-sm">
+                  No links created yet
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
