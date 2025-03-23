@@ -1,9 +1,10 @@
 import React from "react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Separator } from "../ui/separator";
-import { BadgeHelp, Rocket, Search } from "lucide-react";
+import { BadgeHelp, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 const DashboardNav = () => {
   return (
@@ -20,12 +21,10 @@ const DashboardNav = () => {
             <Input type="text" placeholder="Search..." className="pl-10 w-64" />
           </div>
 
-          <Button variant="link" className="p-0">
-            <BadgeHelp size={35} />
-          </Button>
-          <Button className="flex items-center space-x-2">
-            <Rocket size={20} />
-            <span>Upgrade</span>
+          <Button variant="ghost" size="icon" className="p-0" asChild>
+            <Link href="/docs">
+              <BadgeHelp size={35} />
+            </Link>
           </Button>
         </div>
       </div>

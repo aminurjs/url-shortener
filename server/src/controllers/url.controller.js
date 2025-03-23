@@ -116,7 +116,7 @@ export const getUrls = async (req, res) => {
       query.archived = false;
     }
 
-    const urls = await URLScheme.find(query);
+    const urls = await URLScheme.find(query).sort({ createdAt: -1 });
     res.status(200).json(urls);
   } catch (error) {
     res.status(500).json({ error: "Server error" });
@@ -274,24 +274,25 @@ export const getAllLinksAnalytics = async (req, res) => {
         clicks: url.totalClicks || 0,
       }));
 
-    // Get click data for the last 30 days
+    // Get click data for the last 7 days
     const today = new Date();
-    const thirtyDaysAgo = new Date(today);
-    thirtyDaysAgo.setDate(today.getDate() - 30);
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 6);
 
     // Initialize date map for quick lookups
     const dateMap = {};
 
-    // Create an array of dates for the last 30 days
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(thirtyDaysAgo);
+    // Create an array of dates for the last 7 days
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(sevenDaysAgo);
       date.setDate(date.getDate() + i);
       const dateStr = date.toISOString().split("T")[0];
       dateMap[dateStr] = 0;
     }
 
-    // Count clicks per day more efficiently
+    // Count clicks per day from visit history and clickTrends
     urls.forEach((url) => {
+      // Process from visitHistory (primary method)
       if (
         url.visitHistory &&
         Array.isArray(url.visitHistory) &&
@@ -300,10 +301,29 @@ export const getAllLinksAnalytics = async (req, res) => {
         url.visitHistory.forEach((visit) => {
           if (visit && visit.timestamp) {
             const visitDate = new Date(visit.timestamp);
-            const dateStr = visitDate.toISOString().split("T")[0];
-            if (dateMap[dateStr] !== undefined) {
-              dateMap[dateStr]++;
+            if (visitDate >= sevenDaysAgo) {
+              const dateStr = visitDate.toISOString().split("T")[0];
+              if (dateMap[dateStr] !== undefined) {
+                dateMap[dateStr]++;
+              }
             }
+          }
+        });
+      }
+
+      // Alternative: use clickTrends if available and visitHistory is empty
+      if (
+        (!url.visitHistory || url.visitHistory.length === 0) &&
+        url.clickTrends &&
+        Object.keys(url.clickTrends).length > 0
+      ) {
+        Object.entries(url.clickTrends).forEach(([dateHour, count]) => {
+          // Extract date part from dateHour (format: "YYYY-MM-DDThh")
+          const dateStr = dateHour.split("T")[0];
+          const clickDate = new Date(dateStr);
+
+          if (clickDate >= sevenDaysAgo && dateMap[dateStr] !== undefined) {
+            dateMap[dateStr] += count;
           }
         });
       }
@@ -334,39 +354,35 @@ export const getAllLinksAnalytics = async (req, res) => {
     const browserStats = {};
     const deviceStats = {};
     const locationStats = {};
+    const refererStats = {};
 
     urls.forEach((url) => {
       // Process browser stats
-      if (
-        url.browserStats &&
-        url.browserStats instanceof Map &&
-        url.browserStats.size > 0
-      ) {
-        for (const [browser, count] of url.browserStats.entries()) {
+      if (url.browserStats) {
+        Object.entries(url.browserStats).forEach(([browser, count]) => {
           browserStats[browser] = (browserStats[browser] || 0) + count;
-        }
+        });
       }
 
       // Process device stats
-      if (
-        url.deviceStats &&
-        url.deviceStats instanceof Map &&
-        url.deviceStats.size > 0
-      ) {
-        for (const [device, count] of url.deviceStats.entries()) {
+      if (url.deviceStats) {
+        Object.entries(url.deviceStats).forEach(([device, count]) => {
           deviceStats[device] = (deviceStats[device] || 0) + count;
-        }
+        });
       }
 
       // Process location stats
-      if (
-        url.locationStats &&
-        url.locationStats instanceof Map &&
-        url.locationStats.size > 0
-      ) {
-        for (const [location, count] of url.locationStats.entries()) {
+      if (url.locationStats) {
+        Object.entries(url.locationStats).forEach(([location, count]) => {
           locationStats[location] = (locationStats[location] || 0) + count;
-        }
+        });
+      }
+
+      // Process referer stats
+      if (url.refererStats) {
+        Object.entries(url.refererStats).forEach(([referer, count]) => {
+          refererStats[referer] = (refererStats[referer] || 0) + count;
+        });
       }
     });
 
@@ -380,6 +396,8 @@ export const getAllLinksAnalytics = async (req, res) => {
       browserData: browserStats,
       deviceData: deviceStats,
       locationData: locationStats,
+      refererData: refererStats,
+      timeFrame: "7days",
     });
   } catch (error) {
     console.error("Error fetching analytics:", error);
@@ -399,29 +417,54 @@ export const getSingleLinkAnalytics = async (req, res) => {
       return res.status(404).json({ message: "URL not found" });
     }
 
-    // Daily clicks for the last 30 days
+    // Daily clicks for the last 7 days
     const clicksPerDay = {};
     const now = new Date();
-    const thirtyDaysAgo = new Date(now);
-    thirtyDaysAgo.setDate(now.getDate() - 30);
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 6);
 
     // Initialize all days with zero clicks
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(thirtyDaysAgo);
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(sevenDaysAgo);
       date.setDate(date.getDate() + i);
       const dateString = date.toISOString().split("T")[0];
       clicksPerDay[dateString] = 0;
     }
 
-    // Count clicks per day from visit history
-    if (Array.isArray(link.visitHistory)) {
-      link.visitHistory.forEach((visit) => {
-        if (visit && visit.timestamp) {
-          const visitDate = new Date(visit.timestamp);
-          if (visitDate >= thirtyDaysAgo) {
-            const dateString = visitDate.toISOString().split("T")[0];
-            clicksPerDay[dateString] = (clicksPerDay[dateString] || 0) + 1;
-          }
+    // Get clicks from visitHistory
+    const recentVisits = Array.isArray(link.visitHistory)
+      ? link.visitHistory.filter(
+          (visit) =>
+            visit &&
+            visit.timestamp &&
+            new Date(visit.timestamp) >= sevenDaysAgo
+        )
+      : [];
+
+    // Count clicks per day from recent visit history
+    recentVisits.forEach((visit) => {
+      if (visit && visit.timestamp) {
+        const visitDate = new Date(visit.timestamp);
+        const dateString = visitDate.toISOString().split("T")[0];
+        if (clicksPerDay[dateString] !== undefined) {
+          clicksPerDay[dateString]++;
+        }
+      }
+    });
+
+    // Alternative: use clickTrends if available and visitHistory is empty or has no recent data
+    if (
+      recentVisits.length === 0 &&
+      link.clickTrends &&
+      Object.keys(link.clickTrends).length > 0
+    ) {
+      Object.entries(link.clickTrends).forEach(([dateHour, count]) => {
+        // Extract date part from dateHour (format: "YYYY-MM-DDThh")
+        const dateStr = dateHour.split("T")[0];
+        const clickDate = new Date(dateStr);
+
+        if (clickDate >= sevenDaysAgo && clicksPerDay[dateStr] !== undefined) {
+          clicksPerDay[dateStr] += count;
         }
       });
     }
@@ -435,34 +478,34 @@ export const getSingleLinkAnalytics = async (req, res) => {
     // Sort the clicks data chronologically
     clicksData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Safely convert Map to object for referer data
-    let refererData = {};
-    if (link.refererStats && link.refererStats instanceof Map) {
-      refererData = Object.fromEntries(link.refererStats);
-    }
+    // Get data from the link object
+    const browserData = link.browserStats || {};
+    const deviceData = link.deviceStats || {};
+    const locationData = link.locationStats || {};
+    const refererData = link.refererStats || {};
 
-    // Safely convert Maps to objects for other stats
-    const deviceData =
-      link.deviceStats instanceof Map
-        ? Object.fromEntries(link.deviceStats)
-        : {};
+    // Calculate recent clicks
+    const recentClicks = recentVisits.length;
 
-    const browserData =
-      link.browserStats instanceof Map
-        ? Object.fromEntries(link.browserStats)
-        : {};
-
-    const locationData =
-      link.locationStats instanceof Map
-        ? Object.fromEntries(link.locationStats)
-        : {};
+    // Calculate recent unique visitors (unique IP addresses in the last 7 days)
+    const uniqueIPs = new Set();
+    recentVisits.forEach((visit) => {
+      if (visit.ipAddress) {
+        uniqueIPs.add(visit.ipAddress);
+      }
+    });
+    const recentUniqueVisitors = uniqueIPs.size;
 
     res.status(200).json({
       linkId: link._id,
       shortId: link.shortId,
       title: link.title || link.redirectURL,
+      shortURL: link.shortURL,
+      redirectURL: link.redirectURL,
       totalClicks: link.totalClicks || 0,
       uniqueVisitors: link.uniqueVisitors || 0,
+      recentClicks,
+      recentUniqueVisitors,
       clicksData,
       clicksPerDay,
       deviceData,
@@ -470,6 +513,10 @@ export const getSingleLinkAnalytics = async (req, res) => {
       locationData,
       refererData,
       logo: link.logo || null,
+      createdAt: link.createdAt,
+      qrCode: link.qrCode || null,
+      archived: link.archived || false,
+      timeFrame: "7days",
     });
   } catch (error) {
     console.error("Error fetching link analytics:", error);

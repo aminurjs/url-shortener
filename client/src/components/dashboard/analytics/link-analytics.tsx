@@ -21,7 +21,7 @@ import {
   Bar,
 } from "recharts";
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltipContent,
 } from "@/components/ui/chart";
@@ -332,75 +332,77 @@ export function LinkAnalytics({ linkId, shortId }: LinkAnalyticsProps) {
               className="bg-white p-4 rounded-lg border"
             >
               <div className="h-[400px] w-full overflow-hidden">
-                <ChartContainer config={chartConfig}>
-                  <AreaChart
-                    data={clicksChartData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
-                  >
-                    <defs>
-                      <linearGradient
-                        id="colorClicks"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="var(--color-clicks)"
-                          stopOpacity={0.8}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="var(--color-clicks)"
-                          stopOpacity={0.1}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickLine={false}
-                      tickFormatter={(value) => {
-                        const date = new Date(value);
-                        return date.toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        });
-                      }}
-                      tick={{ fontSize: 12 }}
-                      angle={-45}
-                      textAnchor="end"
-                      height={50}
-                    />
-                    <YAxis
-                      tickLine={false}
-                      tick={{ fontSize: 12 }}
-                      allowDecimals={false}
-                      domain={[0, (dataMax: number) => Math.max(1, dataMax)]}
-                    />
-                    <Tooltip
-                      content={<ChartTooltipContent />}
-                      formatter={(value) => [value, "Clicks"]}
-                      labelFormatter={(label) => {
-                        const date = new Date(label);
-                        return date.toLocaleDateString("en-US", {
-                          weekday: "short",
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        });
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="clicks"
-                      stroke="var(--color-clicks)"
-                      fillOpacity={1}
-                      fill="url(#colorClicks)"
-                    />
-                  </AreaChart>
-                </ChartContainer>
+                <ResponsiveContainer width="100%" height="100%">
+                  <ChartContainer config={chartConfig}>
+                    <AreaChart
+                      data={clicksChartData}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
+                    >
+                      <defs>
+                        <linearGradient
+                          id="colorClicks"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop
+                            offset="5%"
+                            stopColor="var(--color-clicks)"
+                            stopOpacity={0.8}
+                          />
+                          <stop
+                            offset="95%"
+                            stopColor="var(--color-clicks)"
+                            stopOpacity={0.1}
+                          />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="date"
+                        tickLine={false}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          });
+                        }}
+                        tick={{ fontSize: 12 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={50}
+                      />
+                      <YAxis
+                        tickLine={false}
+                        tick={{ fontSize: 12 }}
+                        allowDecimals={false}
+                        domain={[0, (dataMax: number) => Math.max(1, dataMax)]}
+                      />
+                      <Tooltip
+                        content={<ChartTooltipContent />}
+                        formatter={(value) => [value, "Clicks"]}
+                        labelFormatter={(label) => {
+                          const date = new Date(label);
+                          return date.toLocaleDateString("en-US", {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          });
+                        }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="clicks"
+                        stroke="var(--color-clicks)"
+                        fillOpacity={1}
+                        fill="url(#colorClicks)"
+                      />
+                    </AreaChart>
+                  </ChartContainer>
+                </ResponsiveContainer>
               </div>
               <div className="mt-4 text-sm text-muted-foreground text-center">
                 Click activity over the last 30 days
